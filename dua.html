@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Nursing MCQ Practice — Adult Health Nursing</title>
+<style>
+  :root{
+    --navy:#0f2740;
+    --navy-light:#1b3a5c;
+    --burgundy:#6b1d2c;
+    --accent:#8c2f39;
+    --bg:#f4f6f9;
+    --card:#ffffff;
+    --text:#1f2933;
+    --muted:#6b7280;
+    --green:#15803d;
+    --green-bg:#dcfce7;
+    --red:#b91c1c;
+    --red-bg:#fee2e2;
+    --amber:#b45309;
+    --amber-bg:#fef3c7;
+    --border:#e2e8f0;
+    --radius:16px;
+    --shadow:0 4px 20px rgba(15,39,64,.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.6;
+    min-height:100vh;
+  }
+  .app{max-width:900px;margin:0 auto;padding:16px 16px 80px;}
+
+  /* ---------- HEADER ---------- */
+  header.top{
+    background:linear-gradient(135deg,var(--navy),var(--navy-light));
+    color:#fff;
+    border-radius:var(--radius);
+    padding:22px 24px;
+    box-shadow:var(--shadow);
+    margin-bottom:18px;
+  }
+  header.top h1{font-size:1.45rem;letter-spacing:.3px;}
+  header.top p.sub{font-size:.9rem;opacity:.82;margin-top:2px;}
+  .top-row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+  .badge{
+    background:rgba(255,255,255,.14);
+    border:1px solid rgba(255,255,255,.25);
+    padding:4px 12px;border-radius:999px;
+    font-size:.78rem;font-weight:600;white-space:nowrap;
+  }
+  .icon-btn{
+    background:rgba(255,255,255,.14);
+    border:1px solid rgba(255,255,255,.3);
+    color:#fff;padding:8px 14px;border-radius:10px;
+    font-size:.85rem;font-weight:600;cursor:pointer;
+    transition:.2s;white-space:nowrap;
+  }
+  .icon-btn:hover{background:rgba(255,255,255,.28);}
+
+  /* ---------- PROGRESS ---------- */
+  .progress-wrap{margin-top:16px;}
+  .progress-meta{display:flex;justify-content:space-between;font-size:.78rem;opacity:.9;margin-bottom:6px;}
+  .progress-bar{height:9px;background:rgba(255,255,255,.18);border-radius:99px;overflow:hidden;}
+  .progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#4ade80,#22d3ee);transition:width .35s ease;border-radius:99px;}
+
+  /* ---------- DASHBOARD ---------- */
+  .dashboard{display:none;}
+  .dashboard.active{display:block;}
+  .stats-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+    gap:12px;margin-bottom:18px;
+  }
+  .stat-card{
+    background:var(--card);border:1px solid var(--border);
+    border-radius:var(--radius);padding:16px;text-align:center;
+    box-shadow:var(--shadow);
+  }
+  .stat-card .num{font-size:1.7rem;font-weight:700;color:var(--navy);line-height:1.2;}
+  .stat-card .lbl{font-size:.72rem;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:600;}
+  .stat-card.good .num{color:var(--green);}
+  .stat-card.bad .num{color:var(--red);}
+  .stat-card.warn .num{color:var(--amber);}
+
+  .panel{
+    background:var(--card);border:1px solid var(--border);
+    border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);
+    margin-bottom:16px;
+  }
+  .panel h2{font-size:1.05rem;color:var(--navy);margin-bottom:14px;}
+  .btn-row{display:flex;flex-wrap:wrap;gap:10px;}
+
+  .btn{
+    border:none;border-radius:11px;padding:12px 20px;
+    font-size:.92rem;font-weight:600;cursor:pointer;
+    transition:.18s;font-family:inherit;
+    display:inline-flex;align-items:center;gap:7px;
+  }
+  .btn:active{transform:scale(.98);}
+  .btn-primary{background:var(--navy);color:#fff;}
+  .btn-primary:hover{background:var(--navy-light);}
+  .btn-accent{background:var(--burgundy);color:#fff;}
+  .btn-accent:hover{background:var(--accent);}
+  .btn-ghost{background:#fff;color:var(--navy);border:1.5px solid var(--border);}
+  .btn-ghost:hover{background:#f0f4f8;}
+  .btn-green{background:var(--green);color:#fff;}
+  .btn-green:hover{background:#166534;}
+  .btn-red{background:var(--red);color:#fff;}
+  .btn-red:hover{background:#991b1b;}
+  .btn:disabled{opacity:.45;cursor:not-allowed;transform:none;}
+
+  /* question grid */
+  .qgrid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(46px,1fr));
+    gap:8px;margin-top:10px;max-height:340px;overflow-y:auto;padding-right:4px;
+  }
+  .qgrid::-webkit-scrollbar{width:8px;}
+  .qgrid::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:8px;}
+  .qcell{
+    aspect-ratio:1;border-radius:9px;border:1.5px solid var(--border);
+    background:#fff;color:var(--muted);font-size:.78rem;font-weight:700;
+    cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center;
+    font-family:inherit;
+  }
+  .qcell:hover{border-color:var(--navy);color:var(--navy);}
+  .qcell.correct{background:var(--green-bg);border-color:#86efac;color:var(--green);}
+  .qcell.incorrect{background:var(--red-bg);border-color:#fca5a5;color:var(--red);}
+  .qcell.current{outline:2.5px solid var(--navy);outline-offset:1px;}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.78rem;color:var(--muted);margin-top:12px;}
+  .legend span{display:flex;align-items:center;gap:6px;}
+  .dot{width:13px;height:13px;border-radius:4px;border:1.5px solid var(--border);background:#fff;}
+  .dot.c{background:var(--green-bg);border-color:#86efac;}
+  .dot.i{background:var(--red-bg);border-color:#fca5a5;}
+
+  /* ---------- QUIZ VIEW ---------- */
+  .quiz-view{display:none;}
+  .quiz-view.active{display:block;}
+
+  .qcard{
+    background:var(--card);border:1px solid var(--border);
+    border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);
+  }
+  .qhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+  .qnum{
+    background:var(--navy);color:#fff;font-size:.8rem;font-weight:700;
+    padding:5px 13px;border-radius:999px;letter-spacing:.3px;
+  }
+  .qsubtag{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+  .qtext{font-size:1.08rem;font-weight:600;color:var(--navy);margin:10px 0 20px;line-height:1.55;}
+
+  .options{display:flex;flex-direction:column;gap:10px;}
+  .opt{
+    display:flex;align-items:flex-start;gap:12px;
+    background:#fbfcfe;border:1.5px solid var(--border);
+    border-radius:12px;padding:13px 15px;cursor:pointer;
+    transition:.15s;position:relative;
+  }
+  .opt:hover{border-color:#94a3b8;background:#f1f5f9;}
+  .opt .letter{
+    flex:0 0 30px;height:30px;border-radius:8px;
+    background:#e2e8f0;color:var(--navy);
+    font-weight:700;font-size:.85rem;
+    display:flex;align-items:center;justify-content:center;
+    transition:.15s;
+  }
+  .opt .txt{flex:1;font-size:.95rem;padding-top:2px;}
+  .opt.selected{border-color:var(--navy);background:#e8eef6;box-shadow:0 0 0 1px var(--navy) inset;}
+  .opt.selected .letter{background:var(--navy);color:#fff;}
+  .opt.correct-ans{border-color:var(--green);background:var(--green-bg);}
+  .opt.correct-ans .letter{background:var(--green);color:#fff;}
+  .opt.wrong-ans{border-color:var(--red);background:var(--red-bg);}
+  .opt.wrong-ans .letter{background:var(--red);color:#fff;}
+  .opt.locked{cursor:default;}
+  .opt.locked:hover{border-color:inherit;background:inherit;}
+  .opt .mark{margin-left:auto;font-weight:700;font-size:.9rem;padding-top:3px;}
+  .opt.correct-ans .mark{color:var(--green);}
+  .opt.wrong-ans .mark{color:var(--red);}
+
+  .feedback{
+    margin-top:18px;padding:15px 18px;border-radius:12px;font-weight:600;
+    display:none;font-size:.95rem;
+  }
+  .feedback.show{display:block;}
+  .feedback.ok{background:var(--green-bg);color:var(--green);border:1px solid #86efac;}
+  .feedback.no{background:var(--red-bg);color:var(--red);border:1px solid #fca5a5;}
+  .feedback .detail{display:block;font-weight:500;margin-top:6px;font-size:.9rem;color:var(--text);}
+
+  .explain{
+    margin-top:16px;background:#f8fafc;border:1px solid var(--border);
+    border-left:4px solid var(--navy);border-radius:10px;padding:16px 18px;
+    font-size:.92rem;display:none;
+  }
+  .explain.show{display:block;}
+  .explain h4{font-size:.8rem;text-transform:uppercase;letter-spacing:.7px;color:var(--navy);margin-bottom:8px;}
+  .explain p{margin-bottom:8px;}
+  .explain p:last-child{margin-bottom:0;}
+  .correction{
+    margin-top:12px;background:var(--amber-bg);border:1px solid #fcd34d;
+    border-radius:10px;padding:12px 14px;font-size:.87rem;color:#78350f;display:none;
+  }
+  .correction.show{display:block;}
+  .correction strong{color:var(--amber);}
+
+  .hint-box{
+    margin-top:16px;background:#eef4fb;border:1px dashed #93b4d8;
+    border-radius:12px;padding:14px 16px;font-size:.92rem;display:none;
+  }
+  .hint-box.show{display:block;}
+  .hint-box .hlbl{font-size:.72rem;text-transform:uppercase;letter-spacing:.7px;font-weight:700;color:var(--navy-light);margin-bottom:5px;display:block;}
+
+  .action-bar{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px;}
+  .action-bar .spacer{flex:1;}
+
+  /* ---------- MODAL ---------- */
+  .modal-back{
+    position:fixed;inset:0;background:rgba(15,39,64,.55);
+    display:none;align-items:center;justify-content:center;
+    padding:20px;z-index:100;backdrop-filter:blur(3px);
+  }
+  .modal-back.show{display:flex;}
+  .modal{
+    background:#fff;border-radius:16px;padding:26px;max-width:440px;width:100%;
+    box-shadow:0 20px 60px rgba(0,0,0,.3);
+  }
+  .modal h3{font-size:1.15rem;color:var(--navy);margin-bottom:10px;}
+  .modal p{font-size:.92rem;color:var(--muted);margin-bottom:20px;}
+  .modal .btn-row{justify-content:flex-end;}
+
+  .empty-note{font-size:.85rem;color:var(--muted);font-style:italic;padding:8px 0;}
+
+  @media(max-width:520px){
+    .app{padding:10px 10px 70px;}
+    header.top{padding:16px 16px;}
+    header.top h1{font-size:1.2rem;}
+    .qcard{padding:18px 15px;}
+    .qtext{font-size:1rem;}
+    .opt{padding:11px 12px;}
+    .opt .txt{font-size:.9rem;}
+    .btn{padding:11px 16px;font-size:.86rem;}
+    .stat-card .num{font-size:1.4rem;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <header class="top">
+    <div class="top-row">
+      <div>
+        <h1>My Nursing MCQ Practice</h1>
+        <p class="sub">Adult Health Nursing — BSN Exam Preparation</p>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <span class="badge" id="hdrTotal">217 Questions</span>
+        <button class="icon-btn" id="hdrHomeBtn">⌂ Home</button>
+      </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span id="hdrProgLabel">Question 1 of 217</span>
+        <span id="hdrScoreLabel">Score: 0 / 217</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="hdrProgFill"></div></div>
+    </div>
+  </header>
+
+  <!-- ================= DASHBOARD ================= -->
+  <section class="dashboard active" id="dashboard">
+    <div class="stats-grid">
+      <div class="stat-card"><div class="num" id="dTotal">217</div><div class="lbl">Total</div></div>
+      <div class="stat-card"><div class="num" id="dAnswered">0</div><div class="lbl">Answered</div></div>
+      <div class="stat-card good"><div class="num" id="dCorrect">0</div><div class="lbl">Correct</div></div>
+      <div class="stat-card bad"><div class="num" id="dIncorrect">0</div><div class="lbl">Incorrect</div></div>
+      <div class="stat-card warn"><div class="num" id="dUnanswered">217</div><div class="lbl">Unanswered</div></div>
+      <div class="stat-card"><div class="num" id="dScore">0%</div><div class="lbl">Score</div></div>
+    </div>
+
+    <div class="panel">
+      <h2>Quick Actions</h2>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="btnStart">▶ Start Quiz</button>
+        <button class="btn btn-ghost" id="btnReviewWrong">⟲ Review Incorrect</button>
+        <button class="btn btn-red" id="btnRestart">↺ Restart Quiz</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Question Navigator</h2>
+      <div class="qgrid" id="qgrid"></div>
+      <div class="legend">
+        <span><i class="dot"></i> Unanswered</span>
+        <span><i class="dot c"></i> Correct</span>
+        <span><i class="dot i"></i> Incorrect</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= QUIZ VIEW ================= -->
+  <section class="quiz-view" id="quizView">
+    <div class="qcard">
+      <div class="qhead">
+        <span class="qnum" id="qNumTag">Question 1</span>
+        <span class="qsubtag" id="qOrigNum">Original #1</span>
+      </div>
+      <div class="qtext" id="qText">Loading question…</div>
+
+      <div class="options" id="optionsBox"></div>
+
+      <div class="feedback" id="feedbackBox"></div>
+      <div class="explain" id="explainBox"></div>
+      <div class="correction" id="correctionBox"></div>
+      <div class="hint-box" id="hintBox">
+        <span class="hlbl">💡 Hint</span>
+        <span id="hintText"></span>
+      </div>
+
+      <div class="action-bar">
+        <button class="btn btn-ghost" id="btnPrev">← Previous</button>
+        <button class="btn btn-ghost" id="btnHint">💡 Hint</button>
+        <button class="btn btn-accent" id="btnCheck">✓ Check Answer</button>
+        <button class="btn btn-green" id="btnNext">Next →</button>
+        <button class="btn btn-ghost" id="btnRetry" style="display:none;">↻ Retry</button>
+        <div class="spacer"></div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ================= MODAL ================= -->
+<div class="modal-back" id="modalBack">
+  <div class="modal">
+    <h3 id="modalTitle">Confirm</h3>
+    <p id="modalMsg">Are you sure?</p>
+    <div class="btn-row">
+      <button class="btn btn-ghost" id="modalCancel">Cancel</button>
+      <button class="btn btn-red" id="modalConfirm">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   QUESTION DATASET — all 217 MCQs from the supplied source bank.
+   Fields: id, originalQuestionNumber, questionText, options, correctAnswer,
+           explanation, hint, scientificCorrection, sourceReference
+   Answers are 0-indexed option positions (A=0, B=1, …).
+   ===================================================================== */
+
+const QUESTIONS = [
+/* ---------- UNIT 1: Nursing History ---------- */
+{id:1, originalQuestionNumber:1, questionText:"Who is considered the founder of modern nursing?", options:["Rufaidah Bint Sa'ad","Elizabeth Fry","Florence Nightingale","Virginia Henderson"], correctAnswer:2, explanation:"Florence Nightingale is universally regarded as the founder of modern nursing. She established the first scientifically based nursing school (St. Thomas' Hospital, London, 1860), emphasised sanitation and statistics, and transformed nursing into a respected profession.", hint:"Think of the English nurse who founded the first professional nursing school and became famous during the Crimean War.", sourceReference:"Unit 1 — Nursing History"},
+{id:2, originalQuestionNumber:2, questionText:"During which war did Florence Nightingale gain fame for her nursing work?", options:["World War I","Crimean War","American Civil War","Boer War"], correctAnswer:1, explanation:"Florence Nightingale gained fame during the Crimean War (1853–1856), where she reorganised the military hospital at Scutari and dramatically reduced mortality through hygiene and sanitation reforms. She became known as 'The Lady with the Lamp'.", hint:"It was a 19th-century conflict fought between Russia and an alliance including Britain, France and the Ottoman Empire.", sourceReference:"Unit 1 — Nursing History"},
+{id:3, originalQuestionNumber:3, questionText:"Who was the first Muslim nurse in the Islamic and Eastern world?", options:["Maham","Rufaidah Bint Sa'ad","Phoebe","Wazir Begum"], correctAnswer:1, explanation:"Rufaidah Bint Sa'ad (also spelled Rufaida Al-Aslamia) is recognised as the first Muslim nurse. She cared for the wounded during the battles of the Prophet Muhammad (PBUH), established a field hospital, and trained other women in nursing care.", hint:"She is a revered figure from early Islamic history who cared for wounded soldiers and organised a mobile field hospital.", sourceReference:"Unit 1 — Nursing History"},
+{id:4, originalQuestionNumber:4, questionText:"In which year was the Pakistan Nursing Council (PNC) established?", options:["1947","1948","1952","1973"], correctAnswer:1, explanation:"The Pakistan Nursing Council (PNC) was established in 1948, shortly after Pakistan's independence. It is the regulatory body responsible for nursing education standards, registration and licensing of nurses in Pakistan.", hint:"It was founded just one year after Pakistan gained independence.", sourceReference:"Unit 1 — Nursing History"},
+{id:5, originalQuestionNumber:5, questionText:"Which ancient civilization was the first to maintain medical records?", options:["Greek","Roman","Egyptian","Chinese"], correctAnswer:2, explanation:"Ancient Egypt is credited with the earliest systematic medical records. Egyptian physicians documented diagnoses, treatments and outcomes on papyrus (e.g., the Edwin Smith and Ebers papyri), and they had organised medical training and practice.", hint:"Think of the civilization that built the pyramids and developed papyrus writing.", sourceReference:"Unit 1 — Nursing History"},
+{id:6, originalQuestionNumber:6, questionText:"What was the mortality rate of British troops that Florence Nightingale found during the Crimean War?", options:["10%","25%","41%","50%"], correctAnswer:2, explanation:"Florence Nightingale found a mortality rate of approximately 41% among British troops in the Scutari hospital. Most deaths were caused by preventable infectious diseases (typhus, cholera, dysentery) due to poor sanitation rather than battle wounds. Her reforms reduced this dramatically.", hint:"It was a very high figure — close to 4 in 10 soldiers — caused mainly by infectious disease, not combat wounds.", sourceReference:"Unit 1 — Nursing History"},
+{id:7, originalQuestionNumber:7, questionText:"The term \"Lady with the Lamp\" is associated with:", options:["Elizabeth Fry","Florence Nightingale","Rufaidah Bint Sa'ad","Dorothea Orem"], correctAnswer:1, explanation:"Florence Nightingale was called 'The Lady with the Lamp' because she made night rounds carrying a lamp to check on wounded soldiers during the Crimean War. The image symbolises compassionate, vigilant nursing care.", hint:"This nickname came from her night-time rounds among wounded soldiers, carrying a lamp.", sourceReference:"Unit 1 — Nursing History"},
+{id:8, originalQuestionNumber:8, questionText:"Which historical period saw a shortage of people to care for the sick due to the closure of monasteries and convents?", options:["Middle Ages","Fifteenth to Nineteenth Century","Early Civilization","Twentieth Century"], correctAnswer:1, explanation:"During the fifteenth to nineteenth century, the dissolution/closure of monasteries and convents removed the main institutions that had provided care for the sick. This created a severe shortage of caregivers and a decline in nursing standards until reforms like Nightingale's revived the profession.", hint:"This period followed the Middle Ages and preceded modern nursing reform — monasteries and convents were being closed.", sourceReference:"Unit 1 — Nursing History"},
+{id:9, originalQuestionNumber:9, questionText:"When did formal nursing education begin in Pakistan?", options:["Before 1947","After 1947","After 1971","In the 21st century"], correctAnswer:1, explanation:"Formal nursing education in Pakistan began after independence in 1947, with the establishment of nursing schools and the Pakistan Nursing Council (1948). Before partition, nursing training in the region was limited and largely under British colonial structures.", hint:"It began in the same era as the creation of the country itself.", sourceReference:"Unit 1 — Nursing History"},
+{id:10, originalQuestionNumber:10, questionText:"Who is considered the first \"visiting nurse\" in ancient Rome?", options:["Florence Nightingale","Phoebe","Rufaidah","Elizabeth Fry"], correctAnswer:1, explanation:"Phoebe is traditionally regarded as the first visiting nurse. She was a deaconess in the early Christian church (mentioned in Romans 16:1) who visited and cared for the sick in their homes in Rome.", hint:"She was a deaconess mentioned in the New Testament who cared for the sick in their homes.", sourceReference:"Unit 1 — Nursing History"},
+
+/* ---------- UNIT 2: Roles of the Nurse ---------- */
+{id:11, originalQuestionNumber:11, questionText:"Which of the following is a primary role of the nurse as a caregiver?", options:["Prescribing medications","Managing physical needs and preventing illness","Performing surgery","Ordering diagnostic tests"], correctAnswer:1, explanation:"As a caregiver, the nurse's primary role is to meet the patient's physical, emotional and spiritual needs and to prevent illness. Prescribing medications, performing surgery and ordering diagnostic tests are outside the scope of nursing practice (they belong to physicians).", hint:"Choose the option that describes direct, holistic patient care — not medical prescriptive or surgical acts.", sourceReference:"Unit 2 — Roles of the Nurse"},
+{id:12, originalQuestionNumber:12, questionText:"What is the role of the nurse as an advocate?", options:["To protect the client's human and legal rights","To teach the client about their illness","To coordinate care with other team members","To manage the nursing unit"], correctAnswer:0, explanation:"As an advocate, the nurse speaks up for and protects the client's human, legal and ethical rights, ensuring the patient's wishes are respected and that they receive safe, appropriate care.", hint:"Advocacy means speaking up for someone — protecting their rights and wishes.", sourceReference:"Unit 2 — Roles of the Nurse"},
+{id:13, originalQuestionNumber:13, questionText:"Ensuring that patients understand their health, illnesses, medications, and treatments is the role of the nurse as a:", options:["Counselor","Teacher","Manager","Researcher"], correctAnswer:1, explanation:"As a teacher/educator, the nurse assesses learning needs and provides health education so patients understand their conditions, medications and treatments, enabling informed decisions and self-care.", hint:"This role is about educating and increasing the patient's knowledge.", sourceReference:"Unit 2 — Roles of the Nurse"},
+{id:14, originalQuestionNumber:14, questionText:"A nurse who assists and guides a patient in solving problems or making decisions is acting as a:", options:["Caregiver","Advocate","Counselor","Leader"], correctAnswer:2, explanation:"A counselor helps patients explore feelings, solve problems and make informed decisions. Counseling involves therapeutic communication, emotional support and guidance — distinct from physical caregiving or advocacy.", hint:"This role focuses on emotional support and helping patients make decisions.", sourceReference:"Unit 2 — Roles of the Nurse"},
+{id:15, originalQuestionNumber:15, questionText:"What is a key characteristic of a profession?", options:["A short training period","A code of ethics","Lack of autonomy","No need for ongoing research"], correctAnswer:1, explanation:"A code of ethics is a defining characteristic of a profession, along with formal education, autonomy, a body of specialised knowledge, ongoing research and self-regulation. Short training, lack of autonomy and no research are the opposite of professional traits.", hint:"Professions are self-regulating and value-bound — look for the option about shared ethical standards.", sourceReference:"Unit 2 — Roles of the Nurse"},
+{id:16, originalQuestionNumber:16, questionText:"Which leadership style involves shared leadership between the leader and the group?", options:["Autocratic","Democratic","Transformational","Situational"], correctAnswer:1, explanation:"In democratic (participative) leadership, decision-making is shared between the leader and group members, encouraging collaboration and input. Autocratic leadership is leader-controlled; transformational inspires change; situational adapts to circumstances.", hint:"The name refers to shared, participative decision-making — like democracy.", sourceReference:"Unit 2 — Roles of the Nurse"},
+{id:17, originalQuestionNumber:17, questionText:"A nurse who collects data to improve nursing practice and provides information for evidence-based practice is acting as a:", options:["Manager","Leader","Researcher","Team player"], correctAnswer:2, explanation:"The researcher role involves systematically collecting and analysing data, generating evidence and applying findings to improve nursing practice and patient outcomes.", hint:"This role is about generating evidence through data collection and analysis.", sourceReference:"Unit 2 — Roles of the Nurse"},
+{id:18, originalQuestionNumber:18, questionText:"Which of the following is a responsibility of a nurse manager?", options:["Direct patient care only","Planning, organizing, directing, and controlling","Performing lab tests","Prescribing physical therapy"], correctAnswer:1, explanation:"The classic management functions are planning, organising, directing and controlling (sometimes plus staffing and budgeting). A nurse manager coordinates resources and staff to deliver quality care — lab tests and physical therapy prescriptions are not nursing management duties.", hint:"Think of the four classic functions of management.", sourceReference:"Unit 2 — Roles of the Nurse"},
+{id:19, originalQuestionNumber:19, questionText:"What is the term for the internal impulse that allows one to take action or change behaviors?", options:["Motivation","Empathy","Sympathy","Assertiveness"], correctAnswer:0, explanation:"Motivation is the internal drive or impulse that initiates and sustains behaviour toward a goal. Empathy is understanding another's feelings; sympathy is feeling pity; assertiveness is standing up for oneself respectfully.", hint:"It is the inner drive that pushes a person to act.", sourceReference:"Unit 2 — Roles of the Nurse"},
+{id:20, originalQuestionNumber:20, questionText:"A nurse who thinks \"outside the box\" and questions why something is being done is demonstrating:", options:["Critical thinking","Leadership","Management","Teaching"], correctAnswer:0, explanation:"Critical thinking is purposeful, reflective reasoning that questions assumptions and considers alternatives — 'thinking outside the box'. It underpins safe clinical judgement and evidence-based practice.", hint:"It is the cognitive skill of questioning assumptions and reasoning through problems.", sourceReference:"Unit 2 — Roles of the Nurse"},
+
+/* ---------- UNIT 3: Goals of Nursing ---------- */
+{id:21, originalQuestionNumber:21, questionText:"According to Maslow's hierarchy of needs, which need is at the base of the pyramid?", options:["Safety","Love and Belonging","Physiological","Esteem"], correctAnswer:2, explanation:"Physiological needs (food, water, oxygen, sleep, shelter) form the base of Maslow's pyramid. They must be met first before higher-level needs can be addressed.", hint:"These are the most basic survival needs — breathing, food, water, sleep.", sourceReference:"Unit 3 — Goals of Nursing"},
+{id:22, originalQuestionNumber:22, questionText:"On what date is World Health Day celebrated?", options:["7th April","12th May","1st December","10th October"], correctAnswer:0, explanation:"World Health Day is celebrated on 7 April each year, commemorating the founding of the World Health Organization (WHO) on 7 April 1948.", hint:"It marks the founding date of the WHO in 1948.", sourceReference:"Unit 3 — Goals of Nursing"},
+{id:23, originalQuestionNumber:23, questionText:"Which of the following is a component of the nursing process?", options:["Assessment","Diagnosis","Planning","All of the above"], correctAnswer:3, explanation:"Assessment, diagnosis, planning, implementation and evaluation are all components of the nursing process. Therefore 'All of the above' is correct.", hint:"The nursing process has multiple steps — consider whether every listed step belongs to it.", sourceReference:"Unit 3 — Goals of Nursing"},
+{id:24, originalQuestionNumber:24, questionText:"What is the definition of a basic human need?", options:["Something that is desired but not essential","Something necessary for an organism to live a healthy life","A luxury item","A self-fulfillment need"], correctAnswer:1, explanation:"A basic human need is something essential for survival and healthy functioning (e.g., food, water, oxygen, safety). Desires and luxuries are not basic needs; self-fulfillment is a higher-level need.", hint:"Focus on the word 'necessary' for survival and health.", sourceReference:"Unit 3 — Goals of Nursing"},
+{id:25, originalQuestionNumber:25, questionText:"Which level of Maslow's hierarchy includes self-esteem, confidence, and achievement?", options:["Physiological","Safety","Love and Belonging","Esteem"], correctAnswer:3, explanation:"The esteem level includes self-esteem, confidence, achievement, respect and recognition from others. It sits above love/belonging and below self-actualisation.", hint:"The level name literally matches the needs listed — self-worth and achievement.", sourceReference:"Unit 3 — Goals of Nursing"},
+{id:26, originalQuestionNumber:26, questionText:"The goal of the nursing process is to:", options:["Diagnose medical diseases","Prescribe medications","Identify and treat actual or potential health problems","Perform surgery"], correctAnswer:2, explanation:"The nursing process aims to identify actual or potential health problems and plan, implement and evaluate nursing interventions to address them. Medical diagnosis, prescribing and surgery are outside nursing scope.", hint:"Nursing focuses on holistic health problems, not medical disease diagnosis.", sourceReference:"Unit 3 — Goals of Nursing"},
+{id:27, originalQuestionNumber:27, questionText:"Which organization is a specialized, non-political health agency of the United Nations?", options:["WHO","PNC","PNF","ICN"], correctAnswer:0, explanation:"The World Health Organization (WHO) is the specialised, non-political health agency of the United Nations, founded in 1948, responsible for international public health.", hint:"It is the UN's dedicated global health agency.", sourceReference:"Unit 3 — Goals of Nursing"},
+{id:28, originalQuestionNumber:28, questionText:"Which need is at the top of Maslow's hierarchy?", options:["Safety","Esteem","Self-actualization","Love and Belonging"], correctAnswer:2, explanation:"Self-actualisation is at the top of Maslow's pyramid — the fulfilment of one's full potential, creativity and personal growth. It can only be pursued once lower needs are met.", hint:"The peak of the pyramid is about reaching one's full potential.", sourceReference:"Unit 3 — Goals of Nursing"},
+{id:29, originalQuestionNumber:29, questionText:"Who defined nursing as \"assisting the individual, sick or well, in the performance of those activities contributing to health\"?", options:["Florence Nightingale","Virginia Henderson","ANA","World Health Organization"], correctAnswer:1, explanation:"Virginia Henderson defined nursing as assisting individuals (sick or well) in performing activities that contribute to health, recovery or a peaceful death — activities they would perform unaided if they had the strength, will or knowledge. Her 14 basic needs form her nursing theory.", hint:"This theorist is famous for the '14 basic needs' and a definition focused on assisting individuals.", sourceReference:"Unit 3 — Goals of Nursing"},
+{id:30, originalQuestionNumber:30, questionText:"Which of the following is NOT a step in the nursing process?", options:["Assessment","Evaluation","Intervention","Diagnosis"], correctAnswer:2, explanation:"The five steps of the nursing process are Assessment, Diagnosis, Planning, Implementation and Evaluation. 'Intervention' is not a separate named step; it is part of Implementation. (The source note also clarifies this.)", hint:"The official five steps are ADPIE — check which option is not one of those exact labels.", scientificCorrection:"Source note: 'Intervention' is part of Implementation; the five steps are Assessment, Diagnosis, Planning, Implementation, Evaluation.", sourceReference:"Unit 3 — Goals of Nursing"},
+
+/* ---------- UNIT 4: Communication ---------- */
+{id:31, originalQuestionNumber:31, questionText:"What is the process of sending and receiving a message called?", options:["Interaction","Communication","Feedback","Observation"], correctAnswer:1, explanation:"Communication is the process of sending and receiving messages through a channel, with feedback. Interaction is a broader social exchange; feedback is one component; observation is a separate skill.", hint:"The general term for exchanging messages between a sender and receiver.", sourceReference:"Unit 4 — Communication"},
+{id:32, originalQuestionNumber:32, questionText:"Which of the following is an example of non-verbal communication?", options:["Speaking","Writing","Facial expressions","Reading"], correctAnswer:2, explanation:"Facial expressions are non-verbal communication — conveying meaning without words. Speaking, writing and reading all involve verbal (word-based) communication.", hint:"It is the only option that does not involve words.", sourceReference:"Unit 4 — Communication"},
+{id:33, originalQuestionNumber:33, questionText:"What is the term for communication that is purposeful and goal-oriented, creating a beneficial outcome for the client?", options:["Social communication","Therapeutic communication","Verbal communication","Non-verbal communication"], correctAnswer:1, explanation:"Therapeutic communication is purposeful, planned, goal-directed communication that promotes the client's wellbeing and helps achieve health goals. Social communication is casual; verbal/non-verbal describe the mode, not the purpose.", hint:"The word 'therapeutic' means healing — this type of communication is deliberate and client-focused.", sourceReference:"Unit 4 — Communication"},
+{id:34, originalQuestionNumber:34, questionText:"What does the acronym SOLER stand for in active listening?", options:["Sit, Open, Lean, Eye contact, Relax","Stand, Observe, Listen, Explain, Respond","Speak, Open, Look, Engage, Repeat","Sit, Organize, Listen, Evaluate, Report"], correctAnswer:0, explanation:"SOLER is a mnemonic for active listening body language: Sit squarely, Open posture, Lean forward, Eye contact, Relax. It helps the nurse communicate attentiveness and presence.", hint:"The first word is 'Sit' and it is about body posture during listening.", sourceReference:"Unit 4 — Communication"},
+{id:35, originalQuestionNumber:35, questionText:"Which of the following is a barrier to effective communication?", options:["Active listening","Empathy","Changing the subject","Clarification"], correctAnswer:2, explanation:"Changing the subject is a barrier — it interrupts the patient's flow, signals disinterest and blocks expression of concerns. Active listening, empathy and clarification all facilitate communication.", hint:"Which option disrupts the patient's chance to express themselves?", sourceReference:"Unit 4 — Communication"},
+{id:36, originalQuestionNumber:36, questionText:"Repeating the patient's words to encourage them to give more details is known as:", options:["Paraphrasing","Reflection","Clarification","Summarizing"], correctAnswer:1, explanation:"Reflection involves repeating or mirroring the patient's words/feelings back to them, encouraging elaboration and showing that you are listening. Paraphrasing restates in your own words; clarification asks for clarity; summarising condenses key points.", hint:"It is like holding up a mirror to the patient's words.", sourceReference:"Unit 4 — Communication"},
+{id:37, originalQuestionNumber:37, questionText:"What is the term for the distance observed between two people, often 4 to 12 feet?", options:["Intimate zone","Personal zone","Social zone","Public zone"], correctAnswer:2, explanation:"The social zone is approximately 4–12 feet and is used for formal, professional interactions (e.g., interviews, teaching). Intimate is 0–18 inches; personal is 18 inches–4 feet; public is 12+ feet.", hint:"This zone lies between personal and public distance — used in professional settings.", sourceReference:"Unit 4 — Communication"},
+{id:38, originalQuestionNumber:38, questionText:"Which phase of nurse-client communication involves setting mutual goals?", options:["Introduction","Working","Termination","Pre-interaction"], correctAnswer:1, explanation:"The working phase is where the nurse and client set mutual goals, explore problems and implement interventions. The introduction/orientation phase establishes trust; termination ends the relationship; pre-interaction is before meeting the client.", hint:"It is the active, goal-setting middle phase of the relationship.", sourceReference:"Unit 4 — Communication"},
+{id:39, originalQuestionNumber:39, questionText:"\"You said that you don't care but there are tears in your eyes\" is an example of which communication technique?", options:["Empathy","Confrontation","Interpretation","Facilitation"], correctAnswer:1, explanation:"Confrontation is gently pointing out inconsistencies between the client's words and observed behaviour or feelings. Here, the nurse confronts the mismatch between the verbal statement and the tears. Empathy is understanding feelings; interpretation offers meaning; facilitation encourages expression.", hint:"The nurse is pointing out a mismatch between words and body language.", sourceReference:"Unit 4 — Communication"},
+{id:40, originalQuestionNumber:40, questionText:"Which of the following is considered a written method of communication in nursing?", options:["A conversation with a patient","A verbal report to a physician","Charting in the patient's record","A team meeting"], correctAnswer:2, explanation:"Charting (documentation) in the patient's record is the formal written method of communication in nursing — it conveys care, observations and interventions to the whole team. The other options are verbal/spoken communication.", hint:"Which option produces a permanent written record of care?", sourceReference:"Unit 4 — Communication"},
+
+/* ---------- UNIT 5: Vital Signs ---------- */
+{id:41, originalQuestionNumber:41, questionText:"Which of the following is NOT a vital sign?", options:["Temperature","Pulse","Blood Pressure","Pain"], correctAnswer:3, explanation:"The classic four vital signs are temperature, pulse, respiration and blood pressure. Pain is often called the 'fifth vital sign', but strictly it is not one of the classic four. Hence the best answer among the options is Pain.", hint:"Four are classic; the odd one is often informally called the 'fifth'.", scientificCorrection:"Source note: Pain is often called the 5th vital sign, but the classic four are temperature, pulse, respiration, BP.", sourceReference:"Unit 5 — Vital Signs"},
+{id:42, originalQuestionNumber:42, questionText:"What is the normal oral body temperature range for an adult?", options:["96.6 °F to 98.6 °F","97.6 °F to 99.6 °F","98.6 °F to 100.6 °F","99.6 °F to 101.6 °F"], correctAnswer:1, explanation:"Normal oral temperature for an adult is approximately 36.5–37.5 °C, which converts to about 97.6–99.6 °F. The other ranges are shifted too low or too high.", hint:"Convert 36.5–37.5 °C to Fahrenheit — it sits just below 100 °F.", sourceReference:"Unit 5 — Vital Signs"},
+{id:43, originalQuestionNumber:43, questionText:"Which pulse site is most commonly used to assess the heart rate?", options:["Apical","Carotid","Radial","Femoral"], correctAnswer:2, explanation:"The radial pulse (at the wrist) is the most commonly used site for routine assessment of heart rate in adults because it is easily accessible, safe and comfortable. Apical is used when precision is critical or in specific conditions; carotid and femoral are used in emergencies or specific assessments.", hint:"It is the pulse site on the wrist that nurses routinely use.", sourceReference:"Unit 5 — Vital Signs"},
+{id:44, originalQuestionNumber:44, questionText:"A normal adult pulse rate is:", options:["40-60 beats per minute","60-100 beats per minute","100-120 beats per minute","120-140 beats per minute"], correctAnswer:1, explanation:"The normal adult resting heart rate is 60–100 beats per minute. Below 60 is bradycardia; above 100 is tachycardia.", hint:"It spans from the lower bradycardia threshold to the tachycardia threshold.", sourceReference:"Unit 5 — Vital Signs"},
+{id:45, originalQuestionNumber:45, questionText:"What is the term for a respiratory rate below 12 breaths per minute?", options:["Tachypnea","Bradypnea","Dyspnea","Apnea"], correctAnswer:1, explanation:"Bradypnea is abnormally slow breathing (below 12 breaths/min in adults). Tachypnea is fast breathing; dyspnea is difficulty breathing; apnea is absence of breathing.", hint:"'Brady-' means slow; '-pnea' means breathing.", sourceReference:"Unit 5 — Vital Signs"},
+{id:46, originalQuestionNumber:46, questionText:"What does the systolic blood pressure represent?", options:["Pressure in the arteries when the heart is relaxing","Pressure in the arteries when the heart is contracting","The difference between systolic and diastolic pressure","The average pressure in the arteries"], correctAnswer:1, explanation:"Systolic pressure is the peak pressure in the arteries during ventricular contraction (systole). Diastolic pressure is the pressure during relaxation. Pulse pressure is the difference between them.", hint:"'Systole' means contraction — which pressure matches that phase?", sourceReference:"Unit 5 — Vital Signs"},
+{id:47, originalQuestionNumber:47, questionText:"When taking a blood pressure, the cuff should be placed over the:", options:["Brachial artery","Radial artery","Carotid artery","Femoral artery"], correctAnswer:0, explanation:"For standard auscultatory BP measurement, the cuff is wrapped around the upper arm and inflated over the brachial artery, where the Korotkoff sounds are heard with a stethoscope.", hint:"It is the artery in the upper arm, at the elbow crease.", sourceReference:"Unit 5 — Vital Signs"},
+{id:48, originalQuestionNumber:48, questionText:"Which of the following is considered a normal adult blood pressure reading?", options:["80/50 mm Hg","120/80 mm Hg","150/95 mm Hg","180/100 mm Hg"], correctAnswer:1, explanation:"120/80 mm Hg is the classic normal adult BP. 80/50 is hypotension; 150/95 is stage 1–2 hypertension; 180/100 is hypertensive crisis range.", hint:"The textbook 'ideal' normal reading.", sourceReference:"Unit 5 — Vital Signs"},
+{id:49, originalQuestionNumber:49, questionText:"What is the term for a heart rate over 100 beats per minute?", options:["Bradycardia","Tachycardia","Arrhythmia","Murmur"], correctAnswer:1, explanation:"Tachycardia is a resting heart rate above 100 bpm. Bradycardia is below 60 bpm; arrhythmia is abnormal rhythm; murmur is an abnormal heart sound.", hint:"'Tachy-' means fast.", sourceReference:"Unit 5 — Vital Signs"},
+{id:50, originalQuestionNumber:50, questionText:"Pain is often referred to as the:", options:["First vital sign","Fifth vital sign","Primary vital sign","Secondary vital sign"], correctAnswer:1, explanation:"Pain is commonly called the 'fifth vital sign' because it is routinely assessed alongside temperature, pulse, respiration and blood pressure, reflecting its importance in patient care.", hint:"It is numbered after the classic four vital signs.", sourceReference:"Unit 5 — Vital Signs"},
+
+/* ---------- UNIT 6: Skin Management / Pressure Ulcers ---------- */
+{id:51, originalQuestionNumber:51, questionText:"A pressure ulcer is an injury to the skin and underlying tissue resulting from:", options:["Prolonged pressure","A bacterial infection","An allergic reaction","Exposure to chemicals"], correctAnswer:0, explanation:"A pressure ulcer (decubitus ulcer/bedsore) results primarily from prolonged pressure, often combined with shear, friction and moisture, causing ischaemia and tissue damage over bony prominences.", hint:"The name itself tells you the cause — sustained force on the skin.", sourceReference:"Unit 6 — Skin Management"},
+{id:52, originalQuestionNumber:52, questionText:"Which of the following is a common site for pressure ulcers in a patient confined to a bed?", options:["Knees","Elbows","Heels","Abdomen"], correctAnswer:2, explanation:"The heels are a classic pressure-ulcer site in bedridden patients because they bear weight against the mattress over a bony prominence. The sacrum, heels, elbows, hips and occiput are also common sites. (Elbows can be a site too, but heels are the classic answer here.)", hint:"Think of the bony part at the bottom of the leg that rests on the mattress.", scientificCorrection:"Elbows can also develop pressure ulcers, but heels are the most classic correct answer among the options in standard nursing exams.", sourceReference:"Unit 6 — Skin Management"},
+{id:53, originalQuestionNumber:53, questionText:"What is the first stage of a pressure ulcer characterized by?", options:["Full-thickness skin loss","Non-blanchable redness of intact skin","Partial-thickness skin loss","Exposed bone, tendon, or muscle"], correctAnswer:1, explanation:"Stage I pressure ulcer is characterised by intact skin with non-blanchable erythema (redness that does not turn white when pressed) over a bony prominence. It indicates impending tissue damage.", hint:"The skin is still intact, but there is redness that does not fade on pressure.", sourceReference:"Unit 6 — Skin Management"},
+{id:54, originalQuestionNumber:54, questionText:"Which factor contributes to the development of pressure ulcers by stretching and tearing cell walls and tiny blood vessels?", options:["Pressure","Friction","Shear","Moisture"], correctAnswer:2, explanation:"Shear occurs when tissue layers slide against each other (e.g., when a patient slides down in bed), stretching and tearing cells and small blood vessels. Friction damages the surface; pressure causes ischaemia; moisture macerates skin.", hint:"It happens when layers of tissue slide in opposite directions — like sliding down in bed.", sourceReference:"Unit 6 — Skin Management"},
+{id:55, originalQuestionNumber:55, questionText:"How often should an immobile patient be repositioned to prevent pressure ulcers?", options:["Every 12 hours","Every 4-6 hours","At least every 2 hours","Once a day"], correctAnswer:2, explanation:"Immobile patients should be repositioned at least every 2 hours (and more often if at high risk) to relieve pressure over bony prominences and allow tissue perfusion.", hint:"It is a short interval measured in hours — two is the magic number.", sourceReference:"Unit 6 — Skin Management"},
+{id:56, originalQuestionNumber:56, questionText:"A patient with incontinence is at a higher risk for pressure ulcers because:", options:["They have poor nutrition","Moisture makes the skin more susceptible to breakdown","They are usually older","They have decreased sensory perception"], correctAnswer:1, explanation:"Urinary or fecal incontinence keeps the skin moist; moisture macerates (softens and weakens) the skin, making it more vulnerable to friction, shear and breakdown, thus increasing pressure-ulcer risk.", hint:"The key mechanism is wetness damaging the skin barrier.", sourceReference:"Unit 6 — Skin Management"},
+{id:57, originalQuestionNumber:57, questionText:"Which stage of pressure ulcer involves full-thickness tissue loss with exposed bone, tendon, or muscle?", options:["Stage I","Stage II","Stage III","Stage IV"], correctAnswer:3, explanation:"Stage IV pressure ulcer involves full-thickness tissue loss with exposed bone, tendon or muscle (and possibly undermining/tunnelling). Stage III is full-thickness skin loss but without exposed deep structures.", hint:"It is the most severe stage — deep structures like bone are visible.", sourceReference:"Unit 6 — Skin Management"},
+{id:58, originalQuestionNumber:58, questionText:"Which of the following is a nursing intervention to prevent pressure ulcers?", options:["Massaging reddened areas","Using a draw sheet to move patients","Keeping the head of the bed elevated at 90 degrees","Providing a low-protein diet"], correctAnswer:1, explanation:"Using a draw sheet (lift sheet) to move patients reduces friction and shear, helping prevent pressure ulcers. Massaging reddened areas is harmful; a 90° head elevation increases shear; low-protein diets impair healing — patients need adequate protein.", hint:"The correct option reduces friction and shear during transfers.", sourceReference:"Unit 6 — Skin Management"},
+{id:59, originalQuestionNumber:59, questionText:"What is a common complication of a pressure ulcer?", options:["Sepsis","Hypertension","Hyperglycemia","Asthma"], correctAnswer:0, explanation:"Pressure ulcers can become infected and lead to sepsis (systemic infection), osteomyelitis or cellulitis — a serious, potentially life-threatening complication. Hypertension, hyperglycemia and asthma are not direct complications.", hint:"Infection spreading systemically is the feared complication.", sourceReference:"Unit 6 — Skin Management"},
+{id:60, originalQuestionNumber:60, questionText:"Which of the following is a risk factor for developing pressure ulcers?", options:["Adequate nutrition","Decreased sensory perception","Increased mobility","Youthful age"], correctAnswer:1, explanation:"Decreased sensory perception means the patient cannot feel and respond to pressure, so they don't shift position — a major risk factor. Adequate nutrition, increased mobility and youth are protective, not risk factors.", hint:"If a patient cannot feel pressure, they cannot relieve it.", sourceReference:"Unit 6 — Skin Management"},
+
+/* ---------- UNIT 7: Safety & Risk Management ---------- */
+{id:61, originalQuestionNumber:61, questionText:"What is the probability of exposure to danger, harm, or loss called?", options:["Hazard","Risk","Safety","Accident"], correctAnswer:1, explanation:"Risk is the probability or likelihood of exposure to danger, harm or loss. A hazard is the source of potential harm; safety is freedom from harm; an accident is an unplanned event.", hint:"It is about probability/likelihood of harm, not the source itself.", sourceReference:"Unit 7 — Safety & Risk Management"},
+{id:62, originalQuestionNumber:62, questionText:"Which acronym is used to remember the steps for using a fire extinguisher?", options:["PASS","RACE","STOP","DROP"], correctAnswer:0, explanation:"PASS = Pull the pin, Aim at the base of the fire, Squeeze the handle, Sweep side to side. RACE is for fire response (Rescue, Alarm, Confine, Extinguish/Evacuate), not extinguisher use.", hint:"It is the four-step extinguisher mnemonic, not the evacuation mnemonic.", sourceReference:"Unit 7 — Safety & Risk Management"},
+{id:63, originalQuestionNumber:63, questionText:"In the event of a fire, what does the \"C\" in the RACE acronym stand for?", options:["Call","Contain","Confine","Control"], correctAnswer:2, explanation:"RACE = Rescue, Alarm, Confine (contain the fire by closing doors), Extinguish/Evacuate. The 'C' stands for Confine.", hint:"It means to contain the fire by closing doors and windows.", scientificCorrection:"RACE = Rescue, Alarm, Confine, Extinguish/Evacuate.", sourceReference:"Unit 7 — Safety & Risk Management"},
+{id:64, originalQuestionNumber:64, questionText:"A patient with a low platelet count is at an increased risk for which safety hazard?", options:["Falls","Bleeding","Infection","Burns"], correctAnswer:1, explanation:"Platelets are essential for clotting. Low platelet count (thrombocytopenia) increases the risk of bleeding and bruising, even from minor trauma. Falls and infection are risks too but are not the direct result of low platelets.", hint:"Platelets are involved in blood clotting — think of what happens when they are low.", sourceReference:"Unit 7 — Safety & Risk Management"},
+{id:65, originalQuestionNumber:65, questionText:"Which of the following is a physical hazard in the hospital environment?", options:["Bacteria","Slippery floors","Radiation","Stress"], correctAnswer:1, explanation:"Slippery floors are a physical hazard (cause falls). Bacteria are biological hazards; radiation is a physical/radiation hazard but the classic physical-environment answer here is slippery floors; stress is a psychological hazard.", hint:"It is the environmental hazard that directly causes slips and falls.", sourceReference:"Unit 7 — Safety & Risk Management"},
+{id:66, originalQuestionNumber:66, questionText:"When applying restraints, what is a crucial nursing intervention?", options:["Tie the restraint to the side rails","Ensure it is tight to prevent movement","Check circulation and skin integrity frequently","Leave the patient alone to rest"], correctAnswer:2, explanation:"Restraints require frequent (at least every 15–30 minutes initially) checks of circulation, skin integrity, range of motion and patient needs, plus regular release. Restraints must never be tied to side rails and should be the least restrictive necessary.", hint:"Safety monitoring of skin and circulation is the priority while restrained.", sourceReference:"Unit 7 — Safety & Risk Management"},
+{id:67, originalQuestionNumber:67, questionText:"Which of the following is a biological hazard for a nurse?", options:["Needle stick injury","Slippery floor","Lifting a heavy patient","Verbal abuse"], correctAnswer:0, explanation:"A needlestick injury is a biological hazard because it can transmit bloodborne pathogens (HBV, HCV, HIV). Slippery floors are physical; heavy lifting is ergonomic; verbal abuse is psychological.", hint:"It involves potential exposure to bloodborne pathogens.", sourceReference:"Unit 7 — Safety & Risk Management"},
+{id:68, originalQuestionNumber:68, questionText:"What is the primary purpose of a side rail?", options:["To restrict patient movement","To increase patient mobility and prevent falls","To provide a place to attach restraints","To make the bed look neat"], correctAnswer:1, explanation:"Side rails are primarily used to promote patient safety, support mobility/turning and help prevent falls or rolling out of bed. They are not restraints and should never be used solely to restrict movement.", hint:"Safety and fall prevention — not restriction.", sourceReference:"Unit 7 — Safety & Risk Management"},
+{id:69, originalQuestionNumber:69, questionText:"To minimize the risk of falls, a nurse should:", options:["Keep the bed in the highest position","Keep the call bell out of the patient's reach","Ensure the floor is clean and dry","Use loose, non-fitting footwear for the patient"], correctAnswer:2, explanation:"Keeping floors clean and dry removes slipping hazards and is a key fall-prevention measure. The bed should be low, the call bell within reach, and footwear should be non-slip and well-fitting.", hint:"Think about removing environmental slipping hazards.", sourceReference:"Unit 7 — Safety & Risk Management"},
+{id:70, originalQuestionNumber:70, questionText:"How should a nurse handle a needle stick injury?", options:["Ignore it if there is no bleeding","Wash the area with soap and water, report immediately, and complete an incident report","Cover it with a band-aid and continue working","Only report it if the patient is known to have an infectious disease"], correctAnswer:1, explanation:"After a needlestick: wash the site with soap and water (do not squeeze or scrub), report immediately, complete an incident report, and follow post-exposure prophylaxis/ testing protocols. Never ignore it — the source patient's status may be unknown.", hint:"Wash, report, document — and follow exposure protocol regardless of visible bleeding.", sourceReference:"Unit 7 — Safety & Risk Management"},
+
+/* ---------- UNIT 8: Teaching & Learning ---------- */
+{id:71, originalQuestionNumber:71, questionText:"What is the first step in the teaching-learning process?", options:["Develop a teaching plan","Identify the learning needs of the patient","Perform health teaching","Evaluate learning"], correctAnswer:1, explanation:"The teaching-learning process begins with assessing/identifying the learner's needs, readiness and learning style. Only then can a plan be developed, implemented and evaluated.", hint:"You cannot plan teaching until you know what the patient needs to learn.", sourceReference:"Unit 8 — Teaching & Learning"},
+{id:72, originalQuestionNumber:72, questionText:"Which of the following is a principle of teaching-learning?", options:["Ignore the patient's learning needs","Use a single teaching strategy","Include the patient in planning","Avoid communication"], correctAnswer:2, explanation:"Including the patient in planning is a core principle — it promotes engagement, motivation and individualised teaching. Ignoring needs, using only one strategy and avoiding communication are contrary to good teaching principles.", hint:"Patient-centred planning is key — which option involves the patient?", sourceReference:"Unit 8 — Teaching & Learning"},
+{id:73, originalQuestionNumber:73, questionText:"A nurse is teaching a patient about insulin administration. What is the best way to evaluate learning?", options:["Ask the patient if they understand","Have the patient demonstrate the procedure","Give the patient a written test","Ask the family if they understood"], correctAnswer:1, explanation:"Return demonstration is the most reliable way to evaluate psychomotor learning — it shows the patient can actually perform the procedure correctly. Asking 'do you understand?' is subjective and unreliable.", hint:"The best evaluation is observable performance of the skill.", sourceReference:"Unit 8 — Teaching & Learning"},
+{id:74, originalQuestionNumber:74, questionText:"Which factor can affect a patient's ability to learn?", options:["Language","Cognitive level","Cultural differences","All of the above"], correctAnswer:3, explanation:"Language barriers, cognitive ability and cultural differences all affect learning, along with age, motivation, health status, literacy and environment. Therefore 'All of the above' is correct.", hint:"All listed factors influence learning in different ways.", sourceReference:"Unit 8 — Teaching & Learning"},
+{id:75, originalQuestionNumber:75, questionText:"What is the role of the nurse as a teacher?", options:["To provide medical diagnoses","To help patients develop self-care abilities","To prescribe medications","To perform surgery"], correctAnswer:1, explanation:"As a teacher, the nurse helps patients and families develop the knowledge and skills needed for self-care, health promotion and informed decision-making. Diagnosing, prescribing and surgery are not nursing roles.", hint:"Teaching empowers patients to care for themselves.", sourceReference:"Unit 8 — Teaching & Learning"},
+{id:76, originalQuestionNumber:76, questionText:"When developing a teaching plan, the nurse should first:", options:["Select teaching strategies","Assess the patient's learning needs","Implement the plan","Evaluate the outcomes"], correctAnswer:1, explanation:"Assessment of learning needs, readiness and style must come first; it guides the selection of strategies, implementation and evaluation. This mirrors the nursing process.", hint:"Assessment always comes first.", sourceReference:"Unit 8 — Teaching & Learning"},
+{id:77, originalQuestionNumber:77, questionText:"Which of the following is an appropriate teaching strategy for a patient with low literacy?", options:["Providing a complex written handout","Using simple verbal instructions and demonstrations","Lecturing for 30 minutes","Giving a textbook to read"], correctAnswer:1, explanation:"For low-literacy patients, simple verbal instructions, visual aids and teach-back/return demonstration are most effective. Complex handouts, long lectures and textbooks overwhelm and are inappropriate.", hint:"Use simple, show-and-tell methods rather than heavy reading materials.", sourceReference:"Unit 8 — Teaching & Learning"},
+{id:78, originalQuestionNumber:78, questionText:"Health teaching at the clinical site should be:", options:["Based on the nurse's convenience","Individualized to the patient's needs","Given only at discharge","The same for all patients"], correctAnswer:1, explanation:"Teaching must be individualised to the patient's needs, readiness, culture and learning style. It should be ongoing (not just at discharge) and tailored, not convenient for the nurse or identical for all.", hint:"Patient-centred, tailored teaching is the standard.", sourceReference:"Unit 8 — Teaching & Learning"},
+{id:79, originalQuestionNumber:79, questionText:"What is the ultimate goal of patient teaching?", options:["To increase hospital revenue","To promote health and prevent illness","To reduce nursing workload","To satisfy hospital administration"], correctAnswer:1, explanation:"The ultimate goal of patient education is to promote health, prevent illness, and enable patients to manage their conditions and make informed decisions — improving outcomes and quality of life.", hint:"It is about the patient's health and wellbeing, not institutional goals.", sourceReference:"Unit 8 — Teaching & Learning"},
+{id:80, originalQuestionNumber:80, questionText:"Which of the following is a barrier to learning?", options:["Motivation","Lack of interest","Readiness to learn","Good health"], correctAnswer:1, explanation:"Lack of interest is a barrier to learning. Motivation, readiness to learn and good health are facilitators. Other barriers include pain, fatigue, anxiety, low literacy and language difficulties.", hint:"Which option reduces the patient's drive to engage in learning?", sourceReference:"Unit 8 — Teaching & Learning"},
+
+/* ---------- UNIT 9: Oxygenation ---------- */
+{id:81, originalQuestionNumber:81, questionText:"What is the normal range for PaO2?", options:["35-45 mm Hg","75-85 mm Hg","95-100 mm Hg","100-110 mm Hg"], correctAnswer:1, explanation:"Normal PaO2 is approximately 75–100 mm Hg (commonly cited as 80–100 mm Hg); 75–85 mm Hg is accepted in many texts. 35–45 mm Hg is the normal PaCO2 range; values above 100 are not typical for room air.", hint:"It is the oxygen (not carbon dioxide) partial pressure — the normal PaCO2 is 35–45.", scientificCorrection:"Source note: 75–85 mm Hg is accepted in many texts; some use 80–100 mm Hg.", sourceReference:"Unit 9 — Oxygenation"},
+{id:82, originalQuestionNumber:82, questionText:"Which of the following is a function of the cardiovascular system?", options:["Maintain acid-base balance","Transport oxygen and nutrients","Produce red blood cells","Regulate body temperature"], correctAnswer:1, explanation:"The cardiovascular system's primary function is to transport oxygen, nutrients, hormones and waste products throughout the body via the blood. Acid-base balance is largely respiratory/renal; RBCs are produced in bone marrow; temperature regulation is a secondary function.", hint:"The heart and vessels are fundamentally a delivery/transport system.", sourceReference:"Unit 9 — Oxygenation"},
+{id:83, originalQuestionNumber:83, questionText:"What is the term for inadequate tissue oxygenation at the cellular level?", options:["Hypoxemia","Hyperventilation","Hypoxia","Hypoventilation"], correctAnswer:2, explanation:"Hypoxia is inadequate oxygen supply at the tissue/cellular level. Hypoxemia is low oxygen in the blood (low PaO2); hyperventilation and hypoventilation are abnormal breathing patterns.", hint:"The term refers to tissues, not blood oxygen levels.", sourceReference:"Unit 9 — Oxygenation"},
+{id:84, originalQuestionNumber:84, questionText:"Which condition is defined as the collapse of a lobe or an entire lung?", options:["Pneumonia","Atelectasis","Pneumothorax","Hemothorax"], correctAnswer:1, explanation:"Atelectasis is the collapse or incomplete expansion of a lung lobe or an entire lung, often due to airway obstruction or hypoventilation. Pneumonia is infection; pneumothorax is air in the pleural space; hemothorax is blood in the pleural space.", hint:"It refers to alveolar/lung collapse from lack of inflation.", sourceReference:"Unit 9 — Oxygenation"},
+{id:85, originalQuestionNumber:85, questionText:"What is the formula for Cardiac Output (CO)?", options:["CO = Heart Rate / Stroke Volume","CO = Stroke Volume x Heart Rate","CO = Blood Pressure x Heart Rate","CO = Stroke Volume / Heart Rate"], correctAnswer:1, explanation:"Cardiac output = Stroke Volume × Heart Rate (CO = SV × HR). It is the volume of blood pumped by the heart per minute. Normal is ~4–8 L/min.", hint:"Output per minute is the product of how much per beat and beats per minute.", sourceReference:"Unit 9 — Oxygenation"},
+{id:86, originalQuestionNumber:86, questionText:"The primary muscle of inspiration is the:", options:["Intercostal muscle","Abdominal muscle","Diaphragm","Pectoral muscle"], correctAnswer:2, explanation:"The diaphragm is the primary muscle of inspiration. When it contracts, it flattens and increases thoracic volume, creating negative pressure that draws air into the lungs. Intercostals assist; abdominals aid forced expiration.", hint:"It is the dome-shaped muscle separating the chest from the abdomen.", sourceReference:"Unit 9 — Oxygenation"},
+{id:87, originalQuestionNumber:87, questionText:"Which of the following is an early sign of hypoxia?", options:["Cyanosis","Bradypnea","Restlessness","Coma"], correctAnswer:2, explanation:"Restlessness, anxiety and confusion are early signs of hypoxia — the brain responds to low oxygen before cyanosis appears. Cyanosis is a late sign; bradypnea and coma indicate severe deterioration.", hint:"Early hypoxia affects behaviour and mental status before skin colour changes.", sourceReference:"Unit 9 — Oxygenation"},
+{id:88, originalQuestionNumber:88, questionText:"What is the purpose of surfactant in the lungs?", options:["To transport oxygen","To maintain surface tension and prevent alveolar collapse","To fight infection","To remove carbon dioxide"], correctAnswer:1, explanation:"Surfactant reduces alveolar surface tension, preventing alveoli from collapsing at end-expiration (thus preventing atelectasis) and making breathing easier. It does not transport gases or fight infection.", hint:"It keeps the tiny air sacs from sticking shut.", sourceReference:"Unit 9 — Oxygenation"},
+{id:89, originalQuestionNumber:89, questionText:"A patient with a pulse oximetry reading of 85% is most likely experiencing:", options:["Normal oxygenation","Hyperoxia","Hypoxia","Optimal gas exchange"], correctAnswer:2, explanation:"Normal SpO2 is typically ≥95%. A reading of 85% indicates significant hypoxaemia and probable tissue hypoxia, requiring prompt assessment and intervention.", hint:"85% is well below the normal 95–100% range.", sourceReference:"Unit 9 — Oxygenation"},
+{id:90, originalQuestionNumber:90, questionText:"Which method of oxygen delivery provides the most accurate and controlled oxygen concentration?", options:["Nasal cannula","Simple face mask","Venturi mask","Non-rebreather mask"], correctAnswer:2, explanation:"The Venturi mask uses a jet-and-entrainment system to deliver a precise, controlled FiO2 (typically 24–50%), making it the most accurate for controlled oxygen concentration. Nasal cannula and simple masks are variable; non-rebreather delivers high but less precisely controlled FiO2.", hint:"This mask uses air entrainment to give exact oxygen percentages.", sourceReference:"Unit 9 — Oxygenation"},
+
+/* ---------- UNIT 10: Mobility ---------- */
+{id:91, originalQuestionNumber:91, questionText:"Which of the following is an example of an isometric exercise?", options:["Running","Swimming","Squeezing a towel between the knees","Weight lifting"], correctAnswer:2, explanation:"Isometric exercise involves muscle contraction without joint movement — e.g., squeezing a towel between the knees or holding a plank. Running, swimming and weight lifting involve joint movement (isotonic/isokinetic).", hint:"Isometric = same length — the muscle tenses without the joint moving.", sourceReference:"Unit 10 — Mobility"},
+{id:92, originalQuestionNumber:92, questionText:"What is the term for movement of a bone away from the midline of the body?", options:["Adduction","Abduction","Flexion","Extension"], correctAnswer:1, explanation:"Abduction is movement away from the body's midline (e.g., raising the arm sideways). Adduction is toward the midline; flexion decreases the joint angle; extension increases it.", hint:"Think of 'abduct' as taking away — moving away from the centre.", sourceReference:"Unit 10 — Mobility"},
+{id:93, originalQuestionNumber:93, questionText:"Which system is responsible for producing blood cells?", options:["Muscular system","Nervous system","Skeletal system","Cardiovascular system"], correctAnswer:2, explanation:"The skeletal system, specifically the bone marrow, is responsible for haematopoiesis — producing red blood cells, white blood cells and platelets. The cardiovascular system transports them.", hint:"It happens inside bones — in the marrow.", sourceReference:"Unit 10 — Mobility"},
+{id:94, originalQuestionNumber:94, questionText:"Which type of exercise involves a constant speed of movement regardless of the force applied?", options:["Isotonic","Isometric","Isokinetic","Aerobic"], correctAnswer:2, explanation:"Isokinetic exercise involves a constant speed of movement with variable resistance (using specialised equipment). Isotonic is constant tension with joint movement; isometric is no joint movement; aerobic is sustained oxygen-dependent exercise.", hint:"'Iso-kinetic' literally means 'same motion/speed'.", sourceReference:"Unit 10 — Mobility"},
+{id:95, originalQuestionNumber:95, questionText:"What is a common cardiovascular complication of immobility?", options:["Increased blood pressure","Orthostatic hypotension","Increased heart rate","Decreased cholesterol"], correctAnswer:1, explanation:"Orthostatic (postural) hypotension is a common complication of immobility — blood pools in the legs, and on standing, BP drops, causing dizziness/fainting. Immobility also increases DVT risk and decreases cardiac efficiency.", hint:"It happens when a patient stands after lying for a long time and feels dizzy.", sourceReference:"Unit 10 — Mobility"},
+{id:96, originalQuestionNumber:96, questionText:"Which of the following is a result of immobility on the respiratory system?", options:["Increased lung expansion","Atelectasis","Decreased respiratory secretions","Improved gas exchange"], correctAnswer:1, explanation:"Immobility leads to shallow breathing, pooling of secretions and alveolar collapse (atelectasis), increasing the risk of pneumonia. It decreases lung expansion and gas exchange and increases secretions.", hint:"Stasis of secretions and collapse of alveoli — the classic immobility respiratory complication.", sourceReference:"Unit 10 — Mobility"},
+{id:97, originalQuestionNumber:97, questionText:"Turning the sole of the foot inward is known as:", options:["Eversion","Inversion","Pronation","Supination"], correctAnswer:1, explanation:"Inversion is turning the sole of the foot inward (toward the midline). Eversion is turning it outward; pronation is a combined foot movement with eversion; supination involves inversion.", hint:"'In-' = inward — the sole turns in.", sourceReference:"Unit 10 — Mobility"},
+{id:98, originalQuestionNumber:98, questionText:"What is the efficient use of the body as a machine and a means of locomotion called?", options:["Body alignment","Body mechanics","Activity tolerance","Range of motion"], correctAnswer:1, explanation:"Body mechanics refers to the efficient, coordinated and safe use of the body as a machine and for locomotion — including posture, balance and lifting technique — to prevent injury.", hint:"It is about how you use your body safely to move and lift.", sourceReference:"Unit 10 — Mobility"},
+{id:99, originalQuestionNumber:99, questionText:"Which of the following is a nursing diagnosis related to immobility?", options:["Risk for Infection","Impaired Physical Mobility","Acute Pain","Ineffective Coping"], correctAnswer:1, explanation:"'Impaired Physical Mobility' is the NANDA-I nursing diagnosis directly related to immobility. The others may be related but are not the primary immobility diagnosis.", hint:"The diagnosis name literally includes the word 'mobility'.", sourceReference:"Unit 10 — Mobility"},
+{id:100, originalQuestionNumber:100, questionText:"Which type of exercise is defined as a planned, structured, and repetitive bodily movement?", options:["Physical activity","Exercise","Recreation","ADLs"], correctAnswer:1, explanation:"Exercise is planned, structured, repetitive bodily movement done to improve or maintain physical fitness. Physical activity is any bodily movement; recreation is leisure; ADLs are activities of daily living.", hint:"The definition emphasises 'planned and structured' — that is the formal definition of this term.", sourceReference:"Unit 10 — Mobility"},
+
+/* ---------- UNIT 11: Hospitalization ---------- */
+{id:101, originalQuestionNumber:101, questionText:"What is the term for the process of admitting a patient to a hospital?", options:["Discharge","Transfer","Admission","Referral"], correctAnswer:2, explanation:"Admission is the formal process of registering and receiving a patient into a hospital for care. Discharge is leaving; transfer is moving between units/facilities; referral is directing to another service.", hint:"It is the entry process into hospital care.", sourceReference:"Unit 11 — Hospitalization"},
+{id:102, originalQuestionNumber:102, questionText:"Which of the following is a nursing responsibility during admission?", options:["Obtaining informed consent for surgery","Performing a comprehensive assessment","Prescribing medications","Scheduling follow-up appointments"], correctAnswer:1, explanation:"During admission, the nurse performs a comprehensive nursing assessment, orients the patient, documents history and ensures safety/comfort. Informed consent for surgery and prescribing are physician responsibilities (the nurse may witness consent).", hint:"Nursing's core admission task is holistic data collection.", sourceReference:"Unit 11 — Hospitalization"},
+{id:103, originalQuestionNumber:103, questionText:"When transferring a patient to another unit, the nurse must:", options:["Send the patient alone","Communicate the patient's condition to the receiving unit","Stop all medications","Remove the patient's identification band"], correctAnswer:1, explanation:"The nurse must give a clear handover/report of the patient's condition, needs and plan to the receiving unit to ensure continuity and safety of care. The patient is never sent alone, medications continue, and the ID band stays on.", hint:"Continuity of care depends on a proper handover.", sourceReference:"Unit 11 — Hospitalization"},
+{id:104, originalQuestionNumber:104, questionText:"What is the nurse's role in preparing a patient for discharge?", options:["Providing discharge teaching","Ignoring the patient's questions","Delaying the discharge process","Withholding discharge instructions"], correctAnswer:0, explanation:"The nurse provides discharge teaching — medication instructions, warning signs, follow-up appointments, activity/diet guidance and community resources — to promote safe transition and prevent readmission.", hint:"Education is the key nursing role at discharge.", sourceReference:"Unit 11 — Hospitalization"},
+{id:105, originalQuestionNumber:105, questionText:"Which of the following is a normal reaction to hospitalization?", options:["Complete relaxation","Anxiety and fear","Unconditional trust in staff","No emotional response"], correctAnswer:1, explanation:"Anxiety and fear are normal, expected reactions to hospitalization due to unfamiliarity, loss of control, separation and uncertainty about health. Nurses should acknowledge and address these feelings.", hint:"Hospitalisation is stressful — a common emotional response is apprehension.", sourceReference:"Unit 11 — Hospitalization"},
+{id:106, originalQuestionNumber:106, questionText:"What is the term for the transfer of a patient from one unit to another within the hospital?", options:["Admission","Discharge","Transfer","Referral"], correctAnswer:2, explanation:"An intra-hospital transfer is the movement of a patient from one unit/ward to another. Admission is entry; discharge is leaving; referral is direction to another service or specialist.", hint:"It is the movement between units inside the same hospital.", sourceReference:"Unit 11 — Hospitalization"},
+{id:107, originalQuestionNumber:107, questionText:"During discharge, the nurse should ensure that the patient:", options:["Leaves without any instructions","Understands the discharge plan and medications","Is not given any follow-up appointments","Has no access to community resources"], correctAnswer:1, explanation:"The nurse must ensure the patient understands the discharge plan, medications (dose, timing, side effects), follow-up appointments, warning signs and available community resources — using teach-back to confirm understanding.", hint:"Understanding the plan and medications is essential for safe discharge.", sourceReference:"Unit 11 — Hospitalization"},
+{id:108, originalQuestionNumber:108, questionText:"Which of the following is a nursing responsibility during a patient's transfer?", options:["Providing a verbal report to the receiving nurse","Leaving the patient unattended","Discarding the patient's medical records","Avoiding communication with the patient's family"], correctAnswer:0, explanation:"A verbal (and written) handover report to the receiving nurse is essential for continuity and safety during transfer. The patient must never be left unattended, records are transferred not discarded, and family communication is maintained.", hint:"Handover communication is the core nursing responsibility in transfer.", sourceReference:"Unit 11 — Hospitalization"},
+{id:109, originalQuestionNumber:109, questionText:"A patient being admitted to the hospital may experience:", options:["Loss of privacy","Increased independence","Decreased anxiety","No change in routine"], correctAnswer:0, explanation:"Hospitalisation commonly causes loss of privacy (shared rooms, examinations, procedures), loss of independence, disruption of routine and increased anxiety. Nurses should protect privacy and promote autonomy.", hint:"Hospitals reduce personal control and privacy — which option reflects that?", sourceReference:"Unit 11 — Hospitalization"},
+{id:110, originalQuestionNumber:110, questionText:"What is the first step in the discharge process?", options:["The patient leaves the hospital","The nurse assesses the patient's readiness for discharge","The physician signs the discharge order","The family takes the patient home"], correctAnswer:1, explanation:"The discharge process begins with the nurse (and team) assessing the patient's readiness — physical status, understanding, support and resources — before the physician writes the discharge order and the patient leaves.", hint:"Assessment of readiness precedes the actual leaving.", sourceReference:"Unit 11 — Hospitalization"},
+
+/* ---------- Cleaned-up MCQs Q8–Q30 ---------- */
+{id:111, originalQuestionNumber:111, questionText:"Which parts of the brain control our respiratory rate and temperature?", options:["Cerebellum and Cerebrum","Medulla oblongata and Hypothalamus","Anterior and posterior Pituitary gland","Limbic system","Pons and cerebellum"], correctAnswer:1, explanation:"The medulla oblongata (in the brainstem) contains the respiratory centres that control breathing rate, while the hypothalamus is the body's thermostat regulating temperature. Together they control these vital functions.", hint:"One is the breathing centre in the brainstem; the other is the body's thermostat.", sourceReference:"Cleaned-up MCQs"},
+{id:112, originalQuestionNumber:112, questionText:"A nurse prepared a bed to receive a new patient:", options:["Occupied bed","Unoccupied bed","Orthopedic bed","Cardiac bed","All of these"], correctAnswer:1, explanation:"An unoccupied bed is prepared for a patient who is not currently in it — typically for a new admission. An occupied bed is made while the patient is in it; orthopaedic and cardiac beds are specialised frames.", hint:"The bed is empty when the nurse makes it for a new arrival.", sourceReference:"Cleaned-up MCQs"},
+{id:113, originalQuestionNumber:113, questionText:"The fundamental purposes of bedding are:", options:["Clean and comfortable","To reduce the risk of infection","To prevent bed sores","Wrinkle-free","All of these"], correctAnswer:4, explanation:"Good bed-making aims to provide cleanliness, comfort, reduce infection risk, prevent pressure ulcers and keep linens wrinkle-free — all of these are valid purposes.", hint:"Every listed purpose is a recognised goal of proper bed-making.", sourceReference:"Cleaned-up MCQs"},
+{id:114, originalQuestionNumber:114, questionText:"The order of Maslow's Hierarchy of Needs, from bottom to top, is:", options:["Safety, Esteem, Social, Self-Actualization, Physiological","Physiological, Esteem, Social, Safety, Self-Actualization","Physiological, Safety, Social, Esteem, Self-Actualization","Physiological, Safety, Esteem, Social, Self-Actualization","Self-Actualization, Esteem, Social, Safety, Physiological"], correctAnswer:2, explanation:"Maslow's pyramid from bottom to top: Physiological → Safety → Social (Love/Belonging) → Esteem → Self-Actualization. Option C matches this order exactly.", hint:"Bottom = survival needs; top = reaching full potential. Social comes before esteem.", sourceReference:"Cleaned-up MCQs"},
+{id:115, originalQuestionNumber:115, questionText:"Achievement, respect, social recognition, and accomplishment are needs:", options:["Self-Esteem","Safety Needs","Self-Actualization","Physiological Needs","Social Needs"], correctAnswer:0, explanation:"Achievement, respect, recognition and accomplishment belong to the esteem level of Maslow's hierarchy — needs for self-worth and recognition by others.", hint:"The needs describe self-worth and recognition — the esteem level.", sourceReference:"Cleaned-up MCQs"},
+{id:116, originalQuestionNumber:116, questionText:"If pulse rate is greater than 100 bpm or less than 60 bpm, outside the normal range, it is called:", options:["Hypertension and Hypotension","Tachypnea and Bradypnea","Tachycardia and Bradycardia","Hyperpyrexia and Hypoxia","Hyperthermia and Hypothermia"], correctAnswer:2, explanation:"A pulse >100 bpm is tachycardia; <60 bpm is bradycardia. Tachypnea/bradypnea refer to respiratory rate; hypertension/hypotension refer to blood pressure.", hint:"The terms for fast and slow heart rate specifically.", sourceReference:"Cleaned-up MCQs"},
+{id:117, originalQuestionNumber:117, questionText:"Food, water, sleep, and sex are examples of:", options:["Physiological Needs","Safety Needs","Self-Actualization","Social Needs","Self-Esteem"], correctAnswer:0, explanation:"Food, water, sleep and sex are physiological (basic survival) needs at the base of Maslow's pyramid.", hint:"These are the most basic biological survival needs.", sourceReference:"Cleaned-up MCQs"},
+{id:118, originalQuestionNumber:118, questionText:"Learning by listening to words is known as:", options:["Visual learning style","Taste learning style","Auditory learning style","Kinesthetic learning style","None of these"], correctAnswer:2, explanation:"Auditory learners learn best through listening — lectures, discussions, verbal instructions. Visual learners prefer seeing; kinesthetic learners prefer doing/touching.", hint:"'Audio' = hearing — this style learns through listening.", sourceReference:"Cleaned-up MCQs"},
+{id:119, originalQuestionNumber:119, questionText:"In preparing patients and family for discharge:", options:["Nurse role","Nursing responsibility","Nursing care","Both A & C","All of these"], correctAnswer:4, explanation:"Preparing patients and families for discharge encompasses the nurse's role, responsibility and nursing care — all of these describe the nurse's function in discharge preparation.", hint:"All three descriptions apply to the nurse's discharge preparation function.", sourceReference:"Cleaned-up MCQs"},
+{id:120, originalQuestionNumber:120, questionText:"_____ is muscle wasting, which refers to a decrease in the size of muscles in the body.", options:["Disuse atrophy","Disuse osteoporosis","Contractures","Center of gravity","Line of gravity"], correctAnswer:0, explanation:"Disuse atrophy is the wasting/shrinking of muscle due to lack of use (immobility). Disuse osteoporosis is bone loss; contractures are fixed joint deformities; centre/line of gravity relate to balance.", hint:"'Atrophy' means wasting — the muscle shrinks from not being used.", sourceReference:"Cleaned-up MCQs"},
+{id:121, originalQuestionNumber:121, questionText:"A condition of difficulty in breathing is called:", options:["Dyspnea","Tachypnea","Apnea","Bradypnea","Eupnea"], correctAnswer:0, explanation:"Dyspnea is the subjective sensation of difficult or laboured breathing. Tachypnea is fast breathing; apnea is no breathing; bradypnea is slow breathing; eupnea is normal breathing.", hint:"'Dys-' means difficult — difficulty breathing.", sourceReference:"Cleaned-up MCQs"},
+{id:122, originalQuestionNumber:122, questionText:"Tachypnea is indicated by a respiratory rate greater than:", options:["10 breaths/min","20 breaths/min","40 breaths/min","60 breaths/min","80 breaths/min"], correctAnswer:1, explanation:"Tachypnea is a respiratory rate above 20 breaths/min in adults (normal 12–20). Rates of 40+ are severe; 10 is bradypnea territory.", hint:"Normal adult RR is 12–20; above that is fast.", sourceReference:"Cleaned-up MCQs"},
+{id:123, originalQuestionNumber:123, questionText:"The _____ is a hollow, cone-shaped organ about the size of a fist.", options:["Lungs","Liver","Heart","Larynx","Pharynx"], correctAnswer:2, explanation:"The heart is a hollow, cone-shaped muscular organ about the size of a fist, located in the mediastinum, pumping blood throughout the body.", hint:"It is the central pump of the circulatory system.", sourceReference:"Cleaned-up MCQs"},
+{id:124, originalQuestionNumber:124, questionText:"The process of attending to people's needs, experiences, and feelings and making specific interventions to help them learn particular things is called:", options:["Learning","Prioritize needs","Teaching","Examine educational resources","Both A & C"], correctAnswer:2, explanation:"Teaching is the deliberate process of attending to learners' needs, experiences and feelings and providing interventions to help them learn. Learning is the change that occurs in the learner.", hint:"The active, deliberate process provided by the educator.", sourceReference:"Cleaned-up MCQs"},
+{id:125, originalQuestionNumber:125, questionText:"Gaps in knowledge that exist between a desired level of performance and the actual level of performance are called:", options:["Teaching","Learning","Learning needs","Prioritize needs","Evaluation"], correctAnswer:2, explanation:"Learning needs are the gaps between the desired and actual level of knowledge or performance. Identifying them is the first step in patient education.", hint:"The term combines 'learning' with a 'need' — a knowledge gap.", sourceReference:"Cleaned-up MCQs"},
+{id:126, originalQuestionNumber:126, questionText:"Following are all characteristics of safety EXCEPT:", options:["Commitment","Caring","Radiation","Personal","Coaching"], correctAnswer:2, explanation:"Commitment, caring, personal attention and coaching are positive characteristics/attitudes that promote safety. Radiation is a hazard, not a characteristic of safety.", hint:"Which option is a hazard rather than a positive safety quality?", sourceReference:"Cleaned-up MCQs"},
+{id:127, originalQuestionNumber:127, questionText:"Certain chronic conditions such as cardiovascular disease are risk factors for skin breakdown and delayed healing:", options:["Decubitus ulcer","Liver","Diabetes","Stomach","Both C & D"], correctAnswer:2, explanation:"Diabetes is a chronic condition that impairs circulation and healing, making skin breakdown and pressure ulcers more likely — alongside cardiovascular disease. The correct fill-in is Diabetes.", hint:"This chronic metabolic condition impairs circulation and wound healing.", sourceReference:"Cleaned-up MCQs"},
+{id:128, originalQuestionNumber:128, questionText:"Which of the following are common sites of bed sores?", options:["Elbow","Hip","Heel","All of these","None of these"], correctAnswer:3, explanation:"Elbows, hips and heels are all common pressure-ulcer sites (along with sacrum, occiput and shoulders). Therefore 'All of these' is correct.", hint:"All three listed bony prominences can develop bed sores.", sourceReference:"Cleaned-up MCQs"},
+{id:129, originalQuestionNumber:129, questionText:"Abrasion and blister involving the epidermis and possibly dermis is called:", options:["Suspected deep tissue injury","Stage 1","Stage 2","Stage 3","Stage 4"], correctAnswer:2, explanation:"Stage II pressure ulcer involves partial-thickness skin loss with a shallow open ulcer or blister/abrasion involving the epidermis and possibly dermis. Stage I is intact skin with redness.", hint:"Partial-thickness loss with a blister or abrasion = Stage 2.", sourceReference:"Cleaned-up MCQs"},
+{id:130, originalQuestionNumber:130, questionText:"The flow of information from receiver to sender, the reaction to the message, is called:", options:["Sender","Channel","Message","Feedback","Receiver"], correctAnswer:3, explanation:"Feedback is the receiver's response back to the sender, completing the communication loop and confirming that the message was received/understood.", hint:"It is the 'reply' that completes the communication cycle.", sourceReference:"Cleaned-up MCQs"},
+{id:131, originalQuestionNumber:131, questionText:"Following are all elements of communication EXCEPT:", options:["Sender","Message","Channel","Written","Receiver"], correctAnswer:3, explanation:"The core elements of communication are sender, message, channel, receiver and feedback. 'Written' is a mode/medium, not a core element of the communication process.", hint:"Which option is a format, not a component of the communication loop?", sourceReference:"Cleaned-up MCQs"},
+{id:132, originalQuestionNumber:132, questionText:"_____ was an English social reformer, statistician, and the founder of modern nursing.", options:["Lillian Wald","Florence Nightingale","Clara Barton","Parthenope","William Edward"], correctAnswer:1, explanation:"Florence Nightingale was an English social reformer, statistician and the founder of modern nursing. Lillian Wald founded public health nursing in the US; Clara Barton founded the American Red Cross.", hint:"She is the same founder of modern nursing known from earlier questions.", sourceReference:"Cleaned-up MCQs"},
+{id:133, originalQuestionNumber:133, questionText:"The first meeting of the World Health Assembly finished on:", options:["24 July 1948","25 July 1949","26 July 1950","27 July 1951","28 July 1952"], correctAnswer:0, explanation:"The first World Health Assembly was held in Geneva and concluded on 24 July 1948 — the same year the WHO was established. (WHO's founding is commemorated on 7 April, World Health Day.)", hint:"It was in the same year the WHO was founded — 1948.", sourceReference:"Cleaned-up MCQs"},
+
+/* ---------- FON BCQs Q1–Q54 ---------- */
+{id:134, originalQuestionNumber:134, questionText:"Over which artery is the stethoscope placed when taking blood pressure:", options:["Radial","Brachial","Apical","Carotid","Femoral"], correctAnswer:1, explanation:"The stethoscope bell/diaphragm is placed over the brachial artery, just below the cuff on the inner aspect of the elbow, to auscultate Korotkoff sounds during BP measurement.", hint:"The same artery the cuff is wrapped over, at the elbow crease.", sourceReference:"FON BCQs"},
+{id:135, originalQuestionNumber:135, questionText:"A person who speaks up for or acts on behalf of the client so as to protect him, this is called:", options:["Client Advocate","Change agent","Communicator","Teacher","All of the above"], correctAnswer:0, explanation:"A client advocate speaks up for and acts on behalf of the client to protect their rights and interests. Change agent, communicator and teacher are other distinct nursing roles.", hint:"'Advocate' means to speak up for someone.", sourceReference:"FON BCQs"},
+{id:136, originalQuestionNumber:136, questionText:"_____ work a thorough understanding of the research process:", options:["Team manager","Research","Research nurse","Change agent","All of the above"], correctAnswer:2, explanation:"A research nurse requires a thorough understanding of the research process — design, ethics, data collection and analysis — to conduct and support nursing research.", hint:"It is the nursing role dedicated to research.", sourceReference:"FON BCQs"},
+{id:137, originalQuestionNumber:137, questionText:"Nurse Researcher identify research questions, design and conduct scientific _____, collect and analyze data and report:", options:["Studies","Working","Reporting","Documentation","All of these"], correctAnswer:0, explanation:"Nurse researchers identify questions, design and conduct scientific studies, then collect, analyse and report data. The correct fill-in is 'studies'.", hint:"The noun for the scientific investigations researchers conduct.", sourceReference:"FON BCQs"},
+{id:138, originalQuestionNumber:138, questionText:"Clients who have fever, a term is used as:", options:["Febrile","Afebrile","Hyperpyrexia","High grade fever","All of these"], correctAnswer:0, explanation:"A client with fever is described as febrile. Afebrile means no fever; hyperpyrexia is extremely high fever (a specific degree); 'high grade fever' is descriptive, not the standard term.", hint:"The medical adjective meaning 'having a fever'.", sourceReference:"FON BCQs"},
+{id:139, originalQuestionNumber:139, questionText:"Pressure relieving devices used to prevent pressure ulcers include:", options:["Air mattress","Water mattress","Both A & B","Revolving chair","Wheel chair"], correctAnswer:2, explanation:"Air mattresses and water mattresses are pressure-relieving (support-surface) devices that redistribute pressure to prevent ulcers. Chairs are not pressure-relieving devices in this context.", hint:"Both specialised mattresses relieve pressure — pick the option that includes both.", sourceReference:"FON BCQs"},
+{id:140, originalQuestionNumber:140, questionText:"The 5th sign of vital sign is:", options:["Pain","Oxygen","Weight & height","Respiratory rate","Blood pressure"], correctAnswer:0, explanation:"Pain is commonly called the fifth vital sign. The classic four are temperature, pulse, respiration and blood pressure.", hint:"It is the subjective experience routinely assessed alongside the classic four.", sourceReference:"FON BCQs"},
+{id:141, originalQuestionNumber:141, questionText:"Which parts of brain control our respiratory rate & temperature?", options:["Cerebellum & Cerebrum","Medulla oblongata & Hypothalamus","Anterior & posterior Pituitary gland","Limbic system","Pons and cerebellum"], correctAnswer:1, explanation:"The medulla oblongata controls respiratory rate, and the hypothalamus regulates temperature. Together they govern these vital functions.", hint:"One is the brainstem breathing centre; the other is the thermostat.", sourceReference:"FON BCQs"},
+{id:142, originalQuestionNumber:142, questionText:"A Nurse prepared a bed to receive a new patient:", options:["Occupied bed","Unoccupied bed","Orthopedic bed","Cardiac bed","All of these"], correctAnswer:1, explanation:"A bed prepared for a new patient who is not yet in it is an unoccupied bed. Occupied beds are made with the patient in them.", hint:"The bed is empty at the time of preparation.", sourceReference:"FON BCQs"},
+{id:143, originalQuestionNumber:143, questionText:"The fundamental purposes of bedding is:", options:["Clean and comfortable","To reduce the risk of infection","To prevent bed sores","Wrinkles free","All of these"], correctAnswer:4, explanation:"Proper bedding serves all these purposes — cleanliness, comfort, infection reduction, pressure-ulcer prevention and wrinkle-free linens.", hint:"All listed goals are valid purposes of good bed-making.", sourceReference:"FON BCQs"},
+{id:144, originalQuestionNumber:144, questionText:"The order of Maslow's Hierarchy of Needs, from bottom to top is:", options:["Safety, Esteem, Social, Self-Actualization, Physiological","Physiological, Esteem, Social, Safety, Self-Actualization","Physiological, Safety, Social, Esteem, Self-Actualization","Physiological, Safety, Esteem, Social, Self-Actualization","Self-Actualization, Esteem, Social, Safety, Physiological"], correctAnswer:2, explanation:"Bottom to top: Physiological → Safety → Social → Esteem → Self-Actualization. Option C matches.", hint:"Survival first, then safety, belonging, esteem, and finally self-actualisation.", sourceReference:"FON BCQs"},
+{id:145, originalQuestionNumber:145, questionText:"Achievement, respect, social recognition, and accomplishment are needs:", options:["Self-Esteem","Safety Needs","Self-actualization","Physiological Needs","Social Needs"], correctAnswer:0, explanation:"These describe esteem needs — self-worth, achievement, respect and recognition from others.", hint:"They concern self-worth and recognition.", sourceReference:"FON BCQs"},
+{id:146, originalQuestionNumber:146, questionText:"If Pulse rate is greater than 100/bm or lesser than 60/bm; from normal range is called:", options:["Hypertension & Hypotension","Tachyphnea & Bradyphnea","Tachycardia & Bradycardia","Hyperpyrexia & hypoxia","Hyperthermia & hypothermia"], correctAnswer:2, explanation:"Pulse >100 = tachycardia; <60 = bradycardia. The other pairs refer to BP, respiration, temperature/oxygen respectively.", hint:"The heart-rate terms: fast and slow.", sourceReference:"FON BCQs"},
+{id:147, originalQuestionNumber:147, questionText:"Food, water, sleep, and sex, are examples of:", options:["Physiological Needs","Safety Needs","Self-actualization","Social Needs","Self-Esteem"], correctAnswer:0, explanation:"These are physiological needs — the basic biological requirements at the base of Maslow's pyramid.", hint:"Basic survival needs.", sourceReference:"FON BCQs"},
+{id:148, originalQuestionNumber:148, questionText:"Learn by listening to the words is known as:", options:["Visual learning style","Taste learning style","Auditory learning style","Kinesthetic learning style","None of these"], correctAnswer:2, explanation:"Auditory learners learn best by listening — to lectures, discussions and verbal explanations.", hint:"'Audio' = hearing.", sourceReference:"FON BCQs"},
+{id:149, originalQuestionNumber:149, questionText:"_____ in preparing patients and family for discharge.", options:["Nurse role","Nursing responsibility","Nursing care","Both A & C","All of these"], correctAnswer:4, explanation:"Preparing patients/families for discharge involves the nurse's role, responsibility and nursing care — all apply.", hint:"Every listed description fits the nurse's discharge-preparation function.", sourceReference:"FON BCQs"},
+{id:150, originalQuestionNumber:150, questionText:"_____ is muscle wasting, which refer to a decrease in the size of muscles in the body.", options:["Disuse atrophy","Disuse osteoporosis","Contractures","Center of gravity","Line of gravity"], correctAnswer:0, explanation:"Disuse atrophy is muscle wasting/shrinkage from lack of use. Disuse osteoporosis is bone loss; contractures are fixed deformities.", hint:"'Atrophy' = wasting.", sourceReference:"FON BCQs"},
+{id:151, originalQuestionNumber:151, questionText:"It is a condition of difficulty in breathing is called:", options:["Dyspnea","Tachypnea","Apnea","Bradypnea","Eupnoea"], correctAnswer:0, explanation:"Dyspnea = difficulty/laboured breathing. Tachypnea = fast; apnea = none; bradypnea = slow; eupnea = normal.", hint:"'Dys-' = difficult.", sourceReference:"FON BCQs"},
+{id:152, originalQuestionNumber:152, questionText:"Tachypnea is indicated by a respiratory rate greater than:", options:["10 breaths/m","20 breaths/m","40 breaths/m","60 breaths/m","80 breaths/m"], correctAnswer:1, explanation:"Tachypnea = respiratory rate above 20 breaths/min in adults (normal 12–20).", hint:"Above the upper limit of normal adult RR.", sourceReference:"FON BCQs"},
+{id:153, originalQuestionNumber:153, questionText:"The _____ is a hollow cone-shaped organ about the size of a fist.", options:["Lungs","Liver","Heart","Larynx","Pharynx"], correctAnswer:2, explanation:"The heart is a hollow, cone-shaped muscular organ about the size of a fist.", hint:"The central circulatory pump.", sourceReference:"FON BCQs"},
+{id:154, originalQuestionNumber:154, questionText:"It is the process of attending to people's needs, experiences feelings and making specific interventions to help them learn particular things is called:", options:["Learning","Prioritize needs","Teaching","Examine educational resources","Both A & C"], correctAnswer:2, explanation:"This describes teaching — the deliberate process of facilitating learning by addressing needs and intervening.", hint:"The educator's active process.", sourceReference:"FON BCQs"},
+{id:155, originalQuestionNumber:155, questionText:"Gaps in knowledge that exist between a desired level of performance and the actual level of performance is called:", options:["Teaching","Learning","Learning needs","Prioritize needs","Evaluation"], correctAnswer:2, explanation:"Learning needs are the knowledge/performance gaps between the desired and actual levels.", hint:"A 'need' defined by a knowledge gap.", sourceReference:"FON BCQs"},
+{id:156, originalQuestionNumber:156, questionText:"Following all are the characteristics of safety EXCEPT:", options:["Commitment","Caring","Radiation","Personal","Coaching"], correctAnswer:2, explanation:"Commitment, caring, personal attention and coaching promote safety; radiation is a hazard, not a safety characteristic.", hint:"The option that is a hazard, not a safety quality.", sourceReference:"FON BCQs"},
+{id:157, originalQuestionNumber:157, questionText:"Certain chronic conditions such as _____ and cardiovascular disease are risk factors for skin breakdown and delayed healing.", options:["Decubitus ulcer","Liver","Diabetes","Stomach","Both C & D"], correctAnswer:2, explanation:"Diabetes (along with cardiovascular disease) impairs circulation and healing, raising risk of skin breakdown. The correct fill-in is Diabetes.", hint:"A metabolic disease affecting circulation and healing.", sourceReference:"FON BCQs"},
+{id:158, originalQuestionNumber:158, questionText:"Which of the following common sites of bed sores:", options:["Elbow","Hip","Heel","All of these","None of these"], correctAnswer:3, explanation:"Elbows, hips and heels are all common pressure-ulcer sites.", hint:"All three are bony prominences at risk.", sourceReference:"FON BCQs"},
+{id:159, originalQuestionNumber:159, questionText:"Abrasion, blister involving the epidermis and possibly dermis is called:", options:["Suspected deep tissue injury","Stage-1","Stage-2","Stage-3","Stage-4"], correctAnswer:2, explanation:"Stage II pressure ulcer = partial-thickness skin loss (abrasion, blister or shallow ulcer) involving epidermis and possibly dermis.", hint:"Partial-thickness = Stage 2.", sourceReference:"FON BCQs"},
+{id:160, originalQuestionNumber:160, questionText:"It is the flow of information from receiver to the sender, the reaction to the message is called:", options:["Sender","Channel","Message","Feedback","Receiver"], correctAnswer:3, explanation:"Feedback is the receiver's reaction/response sent back to the sender, completing communication.", hint:"The reply that closes the loop.", sourceReference:"FON BCQs"},
+{id:161, originalQuestionNumber:161, questionText:"Following all are the elements of communication EXCEPT:", options:["Sender","Message","Channel","Written","Receiver"], correctAnswer:3, explanation:"Core elements are sender, message, channel, receiver and feedback. 'Written' is a mode, not an element.", hint:"A format, not a communication component.", sourceReference:"FON BCQs"},
+{id:162, originalQuestionNumber:162, questionText:"_____ was an English social reformer, statistician and the founder of modern nursing.", options:["Lillian Wald","Florence Nightingale","Clara Barton","parthenecope","William Edward"], correctAnswer:1, explanation:"Florence Nightingale — English social reformer, statistician and founder of modern nursing.", hint:"The 'Lady with the Lamp'.", sourceReference:"FON BCQs"},
+{id:163, originalQuestionNumber:163, questionText:"The first meeting of World Health Assembly finishing on:", options:["24 July 1948","25 July 1949","26 July 1950","27 July 1951","28 July 1952"], correctAnswer:0, explanation:"The first World Health Assembly concluded on 24 July 1948.", hint:"Same year as WHO's founding — 1948.", sourceReference:"FON BCQs"},
+{id:164, originalQuestionNumber:164, questionText:"A nurse has measured the blood pressure reading was 140/90, what will be the pulse pressure?", options:["60","50","70","40","30"], correctAnswer:1, explanation:"Pulse pressure = systolic − diastolic = 140 − 90 = 50 mm Hg. Normal pulse pressure is ~30–50 mm Hg.", hint:"Subtract the bottom number from the top number.", sourceReference:"FON BCQs"},
+{id:165, originalQuestionNumber:165, questionText:"What is width of or size of BP cuff in adult?", options:["3cm","5cm","13cm","17cm","All of these"], correctAnswer:2, explanation:"The standard adult BP cuff bladder width is approximately 13 cm (with a length of about 24 cm). A cuff that is too narrow falsely elevates BP; too wide falsely lowers it.", hint:"About 13 cm — the standard adult bladder width.", sourceReference:"FON BCQs"},
+{id:166, originalQuestionNumber:166, questionText:"Investigates the role of nurses which further improve the nursing practices:", options:["Manager","Communicator","Client advocate","Researcher","Change agent"], correctAnswer:3, explanation:"The nurse researcher investigates nursing roles and practices to generate evidence that improves care — the research role.", hint:"The role dedicated to investigation and evidence generation.", sourceReference:"FON BCQs"},
+{id:167, originalQuestionNumber:167, questionText:"Bradycardia is a condition that occurs due to:", options:["Decreases respiration from normal range","Increases pulses","Decrease blood pressure","Increases respiratory rate","Decrease pulses from normal range"], correctAnswer:4, explanation:"Bradycardia is a decrease in pulse/heart rate below the normal range (below 60 bpm). It is about pulse rate, not respiration or BP.", hint:"'Brady-' = slow; '-cardia' = heart — a decreased pulse rate.", sourceReference:"FON BCQs"},
+{id:168, originalQuestionNumber:168, questionText:"An adult pulse rate ranges from _____ to _____ beats per minute:", options:["40-100 bpm","60-100 bpm","70-140 bpm","60-100 mmHg","70-120 bpm"], correctAnswer:1, explanation:"Normal adult pulse rate is 60–100 beats per minute. (mmHg is a pressure unit, not a pulse unit.)", hint:"The standard 60–100 bpm range.", sourceReference:"FON BCQs"},
+{id:169, originalQuestionNumber:169, questionText:"Surface Body Temperature is mostly measured at:", options:["Tympanic site","Oral site","Axillary site","Rectal","B and C"], correctAnswer:2, explanation:"Axillary temperature reflects surface body temperature (the axilla is a surface site). Oral, rectal and tympanic measurements reflect core temperature more closely.", hint:"The armpit is a surface site, not a core site.", scientificCorrection:"Axillary is surface; oral/rectal/tympanic are core sites.", sourceReference:"FON BCQs"},
+{id:170, originalQuestionNumber:170, questionText:"Core temperatures cannot be measured at:", options:["Tympanic site","Rectal site","Oral site","Both A and B","None of these"], correctAnswer:2, explanation:"Core temperature is best measured at rectal, tympanic, oral or oesophageal sites. Among the options, oral is the site where core temperature *can* be measured, so the question asks which is NOT a core site — but oral is generally considered a core site in most texts. The source's expected answer is Oral (C), though this is debatable. Flagged for review.", hint:"Which listed site is sometimes considered less reliable for core temperature?", scientificCorrection:"This question is ambiguous. Oral is often considered a core site; axillary is the true surface site. The source's intended answer (C) is questionable — flagged for review.", sourceReference:"FON BCQs"},
+{id:171, originalQuestionNumber:171, questionText:"Which one of the following vital sign is in our conscious control:", options:["Temperature","Pulse","Respirations","Blood pressure","None of these"], correctAnswer:2, explanation:"Respirations can be consciously controlled (to some degree) — a person can hold their breath or change breathing rate, unlike temperature, pulse or BP which are largely autonomic. This is why nurses count respirations without the patient's awareness.", hint:"You can voluntarily hold your breath or change your breathing pattern.", sourceReference:"FON BCQs"},
+{id:172, originalQuestionNumber:172, questionText:"Which of the following pulse site is located in the elbow crease?", options:["Apical","Brachial","Popliteal","Carotid","Dorsal paedis"], correctAnswer:1, explanation:"The brachial artery runs along the inner aspect of the upper arm and is felt in the antecubital (elbow crease) area — the site used for BP measurement.", hint:"Same artery used for BP, at the bend of the elbow.", sourceReference:"FON BCQs"},
+{id:173, originalQuestionNumber:173, questionText:"For a BP reading of 140/92, what is the bottom number (92) known as?", options:["Systolic","Diastolic","Pulse pressure","Volume","Rhythm"], correctAnswer:1, explanation:"The bottom number is the diastolic pressure — the pressure in the arteries when the heart relaxes. The top number is systolic.", hint:"Bottom = relaxation phase pressure.", sourceReference:"FON BCQs"},
+{id:174, originalQuestionNumber:174, questionText:"An instrument used to Measure the blood pressure is:", options:["Sphygmomanometer","Stethoscope","Pulse oximeter","Weight machine","All of these"], correctAnswer:0, explanation:"A sphygmomanometer measures blood pressure. A stethoscope is used to auscultate; a pulse oximeter measures SpO2; a weight machine measures weight.", hint:"The device with a cuff and gauge.", sourceReference:"FON BCQs"},
+{id:175, originalQuestionNumber:175, questionText:"In communication that exchanged shares idea between:", options:["Channel and sender","Sender and feedback","Source and medium","Message and receiver","Sender and receiver"], correctAnswer:4, explanation:"Communication is the exchange/sharing of ideas between a sender and a receiver (with feedback). The core participants are sender and receiver.", hint:"The two main participants in any exchange.", sourceReference:"FON BCQs"},
+{id:176, originalQuestionNumber:176, questionText:"Therapeutic communication is also called as:", options:["Effective communication","Body language","Nonverbal communication","Effective nonverbal communication","None of these"], correctAnswer:0, explanation:"Therapeutic communication is often equated with effective communication — purposeful, goal-directed and client-focused. It can be both verbal and nonverbal.", hint:"A synonym emphasising its purposeful effectiveness.", sourceReference:"FON BCQs"},
+{id:177, originalQuestionNumber:177, questionText:"Therapeutic communication techniques are include all except one:", options:["Give broad opening","Overloading","Exploring","Open ended questions","Offering self"], correctAnswer:1, explanation:"Overloading (giving too much information at once) is a non-therapeutic barrier, not a therapeutic technique. Broad openings, exploring, open-ended questions and offering self are all therapeutic.", hint:"Which technique overwhelms the patient rather than helping them?", sourceReference:"FON BCQs"},
+{id:178, originalQuestionNumber:178, questionText:"All of the following are steps in Therapy planning except one:", options:["Assessment","Nursing diagnosis","Analysis","Implementation","Planning"], correctAnswer:2, explanation:"The nursing process steps are Assessment, Diagnosis, Planning, Implementation and Evaluation. 'Analysis' is not a separate named step (it occurs within diagnosis/assessment).", hint:"The five ADPIE steps — which label is not among them?", scientificCorrection:"Analysis is not a separate step; the nursing process has Assessment, Diagnosis, Planning, Implementation, Evaluation.", sourceReference:"FON BCQs"},
+{id:179, originalQuestionNumber:179, questionText:"Which of the following is Purpose of Transfer:", options:["Patient's need / wish","Availability of Treatment","Medical diagnosis","Financial status","All of the above"], correctAnswer:4, explanation:"A patient may be transferred for any of these reasons: patient need/wish, availability of treatment, medical diagnosis requiring specialised care, or financial status. All are valid purposes.", hint:"All listed reasons can motivate a transfer.", sourceReference:"FON BCQs"},
+{id:180, originalQuestionNumber:180, questionText:"Definition of nursing \"The act of utilizing the environment of the patient to assist him in his recovery\" was given by:", options:["Verginia Henderson","Florence nightingale","Doreen Norton In the 1950","Wiedenbach in 1963","Johnson 1959"], correctAnswer:1, explanation:"Florence Nightingale defined nursing as 'the act of utilising the environment of the patient to assist him in his recovery' — emphasising fresh air, light, warmth, cleanliness and quiet.", hint:"The founder of modern nursing gave this environment-focused definition.", sourceReference:"FON BCQs"},
+{id:181, originalQuestionNumber:181, questionText:"All of the following factors Facilitate learning except one:", options:["Active involvement","Environment","Feedback","Readiness","Stress and anxiety"], correctAnswer:4, explanation:"Active involvement, a conducive environment, feedback and readiness facilitate learning. Stress and anxiety are barriers that impair concentration and learning.", hint:"Which factor interferes with, rather than helps, learning?", sourceReference:"FON BCQs"},
+{id:182, originalQuestionNumber:182, questionText:"All conditions contribute to the development of Pressure Sores except:", options:["Poor Nutrition (malnourishment)","Urinary or fecal incontinence","Chastity","Immobility","None of these"], correctAnswer:2, explanation:"Poor nutrition, incontinence (moisture) and immobility all increase pressure-ulcer risk. 'Chastity' is unrelated to pressure-ulcer development — the odd one out.", hint:"Which option has no physiological link to skin breakdown?", sourceReference:"FON BCQs"},
+{id:183, originalQuestionNumber:183, questionText:"The specialized agency that promote health and control communicable diseases is:", options:["UNICEF","WHO","WFO","ANA","UNDP"], correctAnswer:1, explanation:"The World Health Organization (WHO) is the specialised UN agency responsible for international public health, including health promotion and control of communicable diseases.", hint:"The UN's dedicated global health agency.", sourceReference:"FON BCQs"},
+{id:184, originalQuestionNumber:184, questionText:"The most severe type of Decubitus ulcer which can be life threatening is:", options:["Stage 1","Stage 2","Stage 3","Stage 4","Both a & d"], correctAnswer:3, explanation:"Stage IV is the most severe pressure ulcer — full-thickness tissue loss with exposed bone/tendon/muscle, carrying risk of osteomyelitis and sepsis. It is the most life-threatening stage.", hint:"The deepest stage, with exposed deep structures.", sourceReference:"FON BCQs"},
+{id:185, originalQuestionNumber:185, questionText:"If the person's body temperature is 99.6° F, what will be in Celsius?", options:["38.6 Celsius","36.6 Celsius","37° Celsius","37.6° Celsius","98.6° Celsius"], correctAnswer:3, explanation:"°C = (°F − 32) × 5/9 = (99.6 − 32) × 5/9 = 67.6 × 5/9 ≈ 37.56 °C ≈ 37.6 °C. So the answer is 37.6 °C.", hint:"Use (°F − 32) × 5/9; 99.6 °F is a mild fever in Celsius.", sourceReference:"FON BCQs"},
+{id:186, originalQuestionNumber:186, questionText:"Best treatment and prevention of bedsores was removing the pressure by turning the patient's position every two hourly, it was stated by:", options:["Doreen Norton in the 1950","Lydia Hall in 1955","Wiedenbach in 1963","Fry in 1953","Johnson 1959"], correctAnswer:0, explanation:"Doreen Norton (1950s) is credited with the principle of preventing pressure ulcers by regularly turning/repositioning the patient every two hours to relieve pressure.", hint:"The nurse associated with the two-hourly turning principle in the 1950s.", sourceReference:"FON BCQs"},
+{id:187, originalQuestionNumber:187, questionText:"Temperature checked by a thermometer used in the ear canal is called:", options:["Auxiliary site","Tympanic site","Rectal site","Oral site","All of the above"], correctAnswer:1, explanation:"Tympanic temperature is measured with a thermometer placed in the ear canal, using infrared technology to detect the temperature of the tympanic membrane (a core site).", hint:"The ear canal site is called the tympanic site.", sourceReference:"FON BCQs"},
+
+/* ---------- TEST1_QUESTIONS ---------- */
+{id:188, originalQuestionNumber:188, questionText:"The one of the primary roles of a professional nurse:", options:["To prescribe medication","To provide physical and emotional support to patients","To manage hospital administration","To conduct surgical procedures"], correctAnswer:1, explanation:"A primary role of the professional nurse is to provide physical and emotional support/care to patients. Prescribing, hospital administration and surgery are outside the nursing scope.", hint:"The core of nursing is holistic patient support and care.", sourceReference:"TEST1_QUESTIONS"},
+{id:189, originalQuestionNumber:189, questionText:"The following statement is a TRUE responsibility of professional nurses in terms of health promotion:", options:["Educating people about hygiene, nutrition, and healthy lifestyle","Performing surgeries","Diagnosing diseases without doctor's supervision","Prescribing medication"], correctAnswer:0, explanation:"Health promotion is a core nursing responsibility — educating people about hygiene, nutrition, healthy lifestyles and disease prevention. Surgery, independent diagnosis and prescribing are not nursing roles.", hint:"Health promotion = education for healthy living.", sourceReference:"TEST1_QUESTIONS"},
+{id:190, originalQuestionNumber:190, questionText:"The primary role of a nurse is in healthcare:", options:["To diagnose illnesses","To take care of people who are sick, injured, and need health support","To prescribe medication","To perform surgeries"], correctAnswer:1, explanation:"The primary role of the nurse is to care for people who are sick, injured or in need of health support — providing holistic, compassionate care across health and illness.", hint:"Caring for the sick, injured and those needing support.", sourceReference:"TEST1_QUESTIONS"},
+{id:191, originalQuestionNumber:191, questionText:"The nursing considered in the context of healthcare is:", options:["A secondary support system","The backbone of health care","An administrative role","A specialized field"], correctAnswer:1, explanation:"Nursing is often described as the backbone of healthcare because nurses provide continuous, frontline care and coordinate the patient experience across all settings.", hint:"Nursing is central and essential — a 'backbone'.", sourceReference:"TEST1_QUESTIONS"},
+{id:192, originalQuestionNumber:192, questionText:"The nurses can typically perform his/her work at", options:["Only in hospitals","Only in clinics","Hospitals, clinics, communities, and disaster situation","Only in private practices"], correctAnswer:2, explanation:"Nurses work in diverse settings — hospitals, clinics, communities, homes, schools, disaster/emergency situations and more. Their scope is not limited to one setting.", hint:"Nursing is practised across many environments, including emergencies.", sourceReference:"TEST1_QUESTIONS"},
+{id:193, originalQuestionNumber:193, questionText:"The nurses provide to patients:", options:["Direct patient care, promote health, and prevent illness","Only medication management","Only surgical assistance","Only administrative support"], correctAnswer:0, explanation:"Nurses provide direct patient care, promote health and prevent illness — a broad, holistic scope, not limited to medication, surgery or administration.", hint:"Nursing encompasses care, promotion and prevention.", sourceReference:"TEST1_QUESTIONS"},
+{id:194, originalQuestionNumber:194, questionText:"The primary otherness/difference between an occupation and a profession:", options:["Level of pay","Requirement for formal qualifications and training","Type of work involved","Level of supervision"], correctAnswer:1, explanation:"The key distinction is that a profession requires formal qualifications, specialised education/training, a code of ethics and autonomy — far beyond an occupation.", hint:"Professions require formal, specialised education and credentials.", sourceReference:"TEST1_QUESTIONS"},
+{id:195, originalQuestionNumber:195, questionText:"The following is an example of a Nursing profession:", options:["Doctor","Driver/factory worker","The Care provider to sick","Shopkeeper/laborer"], correctAnswer:2, explanation:"The care provider to the sick is the nursing profession. Doctor is a medical profession; driver/factory worker, shopkeeper and labourer are occupations, not professions.", hint:"Nursing is defined by caring for the sick.", sourceReference:"TEST1_QUESTIONS"},
+{id:196, originalQuestionNumber:196, questionText:"The following characteristic is typically associated with a Nurse profession:", options:["Variable commitment","Supervised work environment","Strong commitment and autonomy","Lack of formal qualifications"], correctAnswer:2, explanation:"A profession like nursing is characterised by strong commitment, autonomy, formal qualifications and a code of ethics — not variable commitment or lack of qualifications.", hint:"Professionalism means dedication plus independent, accountable practice.", sourceReference:"TEST1_QUESTIONS"},
+{id:197, originalQuestionNumber:197, questionText:"The one of the primary roles of a nurse as a teacher:", options:["To administer medication","To teach patients about healthy lifestyles","To perform surgical procedures","To manage hospital administration"], correctAnswer:1, explanation:"As a teacher, the nurse educates patients about healthy lifestyles, self-care, medications and disease management to promote health and prevent complications.", hint:"Teaching = educating patients about health and self-care.", sourceReference:"TEST1_QUESTIONS"},
+{id:198, originalQuestionNumber:198, questionText:"The nurses on duty instruct families on discharge of patient:", options:["How to perform surgical procedures","How to care for a loved one at home","How to manage hospital budgets","How to prescribe medication"], correctAnswer:1, explanation:"At discharge, nurses teach families how to care for the patient at home — medications, wound care, warning signs, diet and follow-up. Families are not taught surgery, budgeting or prescribing.", hint:"Home care instructions are the focus of discharge teaching.", sourceReference:"TEST1_QUESTIONS"},
+{id:199, originalQuestionNumber:199, questionText:"A nurse who coordinates the activities of other healthcare team members is acting as a:", options:["Counselor","Rehabilitator","Manager","Communicator"], correctAnswer:2, explanation:"Coordinating the activities of the healthcare team is the manager role — planning, organising and directing team efforts to deliver coordinated care.", hint:"Coordination of team activities is a management function.", sourceReference:"TEST1_QUESTIONS"},
+{id:200, originalQuestionNumber:200, questionText:"The sensitive questions should be asked during history taking:", options:["In a public area to gather more information quickly","In a quiet and private space","In front of other patients","Over the phone without ensuring privacy"], correctAnswer:1, explanation:"Sensitive questions must be asked in a quiet, private space to protect confidentiality, maintain dignity and encourage honest disclosure. Public areas, other patients and unsecured phone calls violate privacy.", hint:"Privacy and confidentiality are essential for sensitive history.", sourceReference:"TEST1_QUESTIONS"},
+{id:201, originalQuestionNumber:201, questionText:"The health care providers should carefully communicate with patients during history taking:", options:["Using complex medical jargon","Interrupting frequently to clarify doubts","Using respectful and polite language, and listening actively","Avoiding eye contact"], correctAnswer:2, explanation:"Effective history-taking uses respectful, polite language and active listening — avoiding jargon, frequent interruption and poor eye contact, all of which impede communication.", hint:"Respect, politeness and active listening are the hallmarks.", sourceReference:"TEST1_QUESTIONS"},
+{id:202, originalQuestionNumber:202, questionText:"The role and impact of prayers and Holy-Quran for Muslim patients during illness are:", options:["Avoid prayer during illness","Seek comfort, strongness and strength through their faith and spirituality","Consider prayer less important than physical care","Do not believe in the healing power of prayer"], correctAnswer:1, explanation:"For Muslim patients, prayer and recitation of the Holy Quran provide spiritual comfort, strength and hope during illness. Culturally competent nurses respect and support these spiritual practices as part of holistic care.", hint:"Faith and spirituality offer comfort and strength during illness.", sourceReference:"TEST1_QUESTIONS"},
+{id:203, originalQuestionNumber:203, questionText:"The healthcare providers should acknowledge a patient's feelings:", options:["By ignoring their emotions","By changing the subject","By using simple statements to acknowledge their feelings","By discussing other patients' cases"], correctAnswer:2, explanation:"Acknowledging feelings with simple, empathetic statements (e.g., 'I can see this is difficult for you') validates the patient and builds trust. Ignoring, changing the subject or discussing others is non-therapeutic.", hint:"Simple, empathetic acknowledgement validates the patient.", sourceReference:"TEST1_QUESTIONS"},
+{id:204, originalQuestionNumber:204, questionText:"The assurance should be given to the patients regarding their health issue:", options:["That their information will be shared with others for educational purposes","That their information will be posted online","That their information is private and used only for their care","That their information will be used for research without consent"], correctAnswer:2, explanation:"Patients should be assured that their health information is private and confidential, used only for their care, in line with confidentiality and data-protection principles. Sharing or posting without consent is unethical and illegal.", hint:"Confidentiality means information is private and used only for care.", sourceReference:"TEST1_QUESTIONS"},
+{id:205, originalQuestionNumber:205, questionText:"The primary goal of active listening in therapeutic communication is:", options:["To provide immediate solutions to the patient's problems","To interrupt the patient and offer advice","To remain silent throughout the conversation","To pay full attention to the patient's words and emotions"], correctAnswer:3, explanation:"Active listening means giving full, focused attention to the patient's words, tone and emotions — conveying presence and understanding. It is not about quick solutions, interruption or total silence.", hint:"Full attention to both words and feelings is the goal.", sourceReference:"TEST1_QUESTIONS"},
+{id:206, originalQuestionNumber:206, questionText:"The following is an example of a non-therapeutic response:", options:["'You will be fine' (without proof)","'I'm here to listen to you.'","'Can you explain that further?'","'I'm paying attention to what you're saying.'"], correctAnswer:0, explanation:"Offering false reassurance ('You will be fine') without evidence is non-therapeutic — it dismisses concerns and can mislead. The other options are therapeutic techniques.", hint:"False reassurance is a classic non-therapeutic response.", sourceReference:"TEST1_QUESTIONS"},
+{id:207, originalQuestionNumber:207, questionText:"The effect of using non-therapeutic responses on the patient:", options:["It builds trust and reduces anxiety.","It has no impact on the patient's feelings.","It increases stress, fear, or confusion.","It makes the patient feel more relaxed."], correctAnswer:2, explanation:"Non-therapeutic responses (false reassurance, changing the subject, giving advice) increase stress, fear, confusion and distrust, and block open communication.", hint:"Non-therapeutic responses harm rather than help — they raise distress.", sourceReference:"TEST1_QUESTIONS"},
+{id:208, originalQuestionNumber:208, questionText:"The following is a technique of responding non-therapeutically:", options:["Clarification","Active listening","Under-loading","Silence"], correctAnswer:2, explanation:"Under-loading (giving too little information or failing to explore the patient's concerns) is a non-therapeutic technique. Clarification, active listening and silence (used appropriately) are therapeutic.", hint:"The opposite of overloading — withholding/failing to explore.", sourceReference:"TEST1_QUESTIONS"},
+{id:209, originalQuestionNumber:209, questionText:"The consequence of invalidating a patient's emotions:", options:["It makes the patient feel heard and understood.","It reduces trust and stops the patient from sharing openly.","It has no impact on the patient's emotional state.","It increases the patient's confidence."], correctAnswer:1, explanation:"Invalidating a patient's emotions (dismissing or minimising feelings) damages trust and causes the patient to withdraw and stop sharing openly, hindering therapeutic communication.", hint:"Dismissing feelings breaks trust and openness.", sourceReference:"TEST1_QUESTIONS"},
+{id:210, originalQuestionNumber:210, questionText:"The primary purpose of therapeutic communication techniques while taking patient history:", options:["To diagnose the patient quickly","Builds trust and helps gather accurate patient information","To prescribe medication","To discharge the patient"], correctAnswer:1, explanation:"Therapeutic communication during history-taking builds trust and rapport, encouraging the patient to share accurate, complete information — improving assessment quality. It is not for quick diagnosis or prescribing.", hint:"Trust and accurate information are the goals.", sourceReference:"TEST1_QUESTIONS"},
+{id:211, originalQuestionNumber:211, questionText:"The following are a verbal technique used in therapeutic communication:", options:["Using gestures","Maintaining eye contact","Uses words, tone, questions, and therapeutic phrases","Touching the patient"], correctAnswer:2, explanation:"Verbal communication uses words, tone of voice, questions and therapeutic phrases. Gestures, eye contact and touch are non-verbal techniques.", hint:"Which option involves words and speech?", sourceReference:"TEST1_QUESTIONS"},
+{id:212, originalQuestionNumber:212, questionText:"An example of a non-verbal technique used in therapeutic communication are", options:["Asking open-ended questions","Uses gestures, facial expressions, eye contact, posture, touch, and other silent cues","Speaking loudly","Ignoring the patient"], correctAnswer:1, explanation:"Non-verbal communication includes gestures, facial expressions, eye contact, posture, touch and other silent cues. Open-ended questions are verbal; speaking loudly and ignoring are not therapeutic techniques.", hint:"Silent cues like posture, touch and expressions.", sourceReference:"TEST1_QUESTIONS"},
+{id:213, originalQuestionNumber:213, questionText:"The nurse should be ensured for patient comfort during history taking:", options:["Privacy","Presence of many people","Loud environment","Bright lights"], correctAnswer:0, explanation:"Privacy is essential for patient comfort and confidentiality during history-taking. Many people, noise and harsh lighting cause discomfort and inhibit disclosure.", hint:"Confidentiality and comfort go together — privacy is key.", sourceReference:"TEST1_QUESTIONS"},
+{id:214, originalQuestionNumber:214, questionText:"Is it important for nurses to introduce himself to the patient?", options:["To make the patient feel uncomfortable","To build up rapport & trust/establish a professional relationship","To ignore the patient's presence","To leave the room"], correctAnswer:1, explanation:"Introducing oneself builds rapport, trust and a professional relationship — the foundation of therapeutic communication and patient-centred care.", hint:"Introductions establish trust and rapport.", sourceReference:"TEST1_QUESTIONS"},
+{id:215, originalQuestionNumber:215, questionText:"Being a professional health care provider, how should you communicate with the patient?", options:["Clearly and softly","Loudly and quickly","Slowly and unclear","All of these"], correctAnswer:0, explanation:"Professional communication should be clear, calm and softly spoken — respectful and easily understood. Loud/quick or slow/unclear speech impairs communication.", hint:"Clear and calm is the professional standard.", sourceReference:"TEST1_QUESTIONS"},
+{id:216, originalQuestionNumber:216, questionText:"No doubts about roles of nurse but, the primary role of a nurse is considered:", options:["A teacher","A rehabilitator","A caregiver","A manager"], correctAnswer:2, explanation:"Although nurses perform many roles, the primary role is caregiver — providing direct, holistic care to patients. Teaching, rehabilitation and management are additional roles.", hint:"The most fundamental role — direct care.", sourceReference:"TEST1_QUESTIONS"},
+{id:217, originalQuestionNumber:217, questionText:"A nurse who protects a client's human rights and legal rights and by keeping their religion or culture in mind as a:", options:["Protector","Manager","Clinical advocate","Communicator"], correctAnswer:2, explanation:"Protecting a client's human and legal rights — while respecting their religion and culture — is the clinical advocate role. The nurse speaks up for the patient's rights and preferences.", hint:"Speaking up for rights = advocacy.", sourceReference:"TEST1_QUESTIONS"}
+];
+
+/* =====================================================================
+   STATE & PERSISTENCE
+   ===================================================================== */
+const STORAGE_KEY = 'nursing_mcq_progress_v1';
+const TOTAL = QUESTIONS.length;
+
+let state = {
+  current: 0,                 // index in QUESTIONS
+  answers: {},                // id -> selected option index
+  checked: {},                // id -> true when checked
+  hintsShown: {},             // id -> true
+  view: 'dashboard'           // 'dashboard' | 'quiz'
+};
+
+function saveState(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+}
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return;
+    const s = JSON.parse(raw);
+    if(s && typeof s === 'object'){
+      state.current = Number.isInteger(s.current) ? Math.min(Math.max(s.current,0), TOTAL-1) : 0;
+      state.answers = s.answers && typeof s.answers === 'object' ? s.answers : {};
+      state.checked = s.checked && typeof s.checked === 'object' ? s.checked : {};
+      state.hintsShown = s.hintsShown && typeof s.hintsShown === 'object' ? s.hintsShown : {};
+      state.view = s.view === 'quiz' ? 'quiz' : 'dashboard';
+    }
+  }catch(e){}
+}
+
+function resetState(){
+  state = { current:0, answers:{}, checked:{}, hintsShown:{}, view:'dashboard' };
+  saveState();
+}
+
+/* =====================================================================
+   HELPERS
+   ===================================================================== */
+const $ = id => document.getElementById(id);
+
+function stats(){
+  let correct=0, incorrect=0, answered=0;
+  QUESTIONS.forEach(q=>{
+    if(state.checked[q.id]){
+      answered++;
+      if(state.answers[q.id] === q.correctAnswer) correct++;
+      else incorrect++;
+    }
+  });
+  return {total:TOTAL, correct, incorrect, answered, unanswered:TOTAL-answered};
+}
+
+/* =====================================================================
+   RENDER: HEADER
+   ===================================================================== */
+function renderHeader(){
+  const s = stats();
+  const qNum = state.current + 1;
+  $('hdrProgLabel').textContent = `Question ${qNum} of ${TOTAL}`;
+  $('hdrScoreLabel').textContent = `Score: ${s.correct} / ${TOTAL}`;
+  const pct = (s.answered / TOTAL) * 100;
+  $('hdrProgFill').style.width = pct + '%';
+}
+
+/* =====================================================================
+   RENDER: DASHBOARD
+   ===================================================================== */
+function renderDashboard(){
+  const s = stats();
+  $('dTotal').textContent = s.total;
+  $('dAnswered').textContent = s.answered;
+  $('dCorrect').textContent = s.correct;
+  $('dIncorrect').textContent = s.incorrect;
+  $('dUnanswered').textContent = s.unanswered;
+  const pct = s.answered ? Math.round((s.correct/s.answered)*100) : 0;
+  $('dScore').textContent = pct + '%';
+
+  // question grid
+  const grid = $('qgrid');
+  grid.innerHTML = '';
+  QUESTIONS.forEach((q, idx)=>{
+    const btn = document.createElement('button');
+    btn.className = 'qcell';
+    btn.textContent = q.originalQuestionNumber;
+    if(state.checked[q.id]){
+      if(state.answers[q.id] === q.correctAnswer) btn.classList.add('correct');
+      else btn.classList.add('incorrect');
+    }
+    if(idx === state.current) btn.classList.add('current');
+    btn.addEventListener('click', ()=>{
+      state.current = idx;
+      switchView('quiz');
+    });
+    grid.appendChild(btn);
+  });
+}
+
+/* =====================================================================
+   RENDER: QUIZ VIEW
+   ===================================================================== */
+function renderQuestion(){
+  const q = QUESTIONS[state.current];
+  if(!q) return;
+
+  $('qNumTag').textContent = `Question ${state.current + 1}`;
+  $('qOrigNum').textContent = `Original #${q.originalQuestionNumber}`;
+  $('qText').textContent = q.questionText;
+
+  const optBox = $('optionsBox');
+  optBox.innerHTML = '';
+  const letters = ['A','B','C','D','E','F'];
+
+  q.options.forEach((opt, i)=>{
+    const div = document.createElement('div');
+    div.className = 'opt';
+    const letterSpan = document.createElement('span');
+    letterSpan.className = 'letter';
+    letterSpan.textContent = letters[i] || String(i+1);
+    const txtSpan = document.createElement('span');
+    txtSpan.className = 'txt';
+    txtSpan.textContent = opt;
+    div.appendChild(letterSpan);
+    div.appendChild(txtSpan);
+
+    // selected state
+    if(state.answers[q.id] === i) div.classList.add('selected');
+
+    // checked state
+    if(state.checked[q.id]){
+      div.classList.add('locked');
+      if(i === q.correctAnswer){
+        div.classList.add('correct-ans');
+        const mark = document.createElement('span');
+        mark.className = 'mark';
+        mark.textContent = '✓ Correct';
+        div.appendChild(mark);
+      } else if(state.answers[q.id] === i){
+        div.classList.add('wrong-ans');
+        const mark = document.createElement('span');
+        mark.className = 'mark';
+        mark.textContent = '✗';
+        div.appendChild(mark);
+      }
+    } else {
+      div.addEventListener('click', ()=>{
+        state.answers[q.id] = i;
+        saveState();
+        renderQuestion(); // re-render selection
+      });
+    }
+
+    optBox.appendChild(div);
+  });
+
+  // feedback
+  const fb = $('feedbackBox');
+  fb.className = 'feedback';
+  fb.innerHTML = '';
+  if(state.checked[q.id]){
+    const chosen = state.answers[q.id];
+    const isCorrect = chosen === q.correctAnswer;
+    fb.classList.add('show', isCorrect ? 'ok' : 'no');
+    fb.innerHTML = isCorrect
+      ? '✅ Correct!'
+      : `❌ Incorrect. Correct answer: <strong>${letters[q.correctAnswer]} — ${q.options[q.correctAnswer]}</strong>`;
+  }
+
+  // explanation
+  const ex = $('explainBox');
+  ex.className = 'explain';
+  ex.innerHTML = '';
+  if(state.checked[q.id]){
+    ex.classList.add('show');
+    const h4 = document.createElement('h4');
+    h4.textContent = 'Explanation';
+    const p = document.createElement('p');
+    p.textContent = q.explanation || 'No explanation available.';
+    ex.appendChild(h4);
+    ex.appendChild(p);
+  }
+
+  // scientific correction
+  const corr = $('correctionBox');
+  corr.className = 'correction';
+  corr.innerHTML = '';
+  if(state.checked[q.id] && q.scientificCorrection){
+    corr.classList.add('show');
+    corr.innerHTML = `<strong>⚠ Scientific / Source Note:</strong> ${q.scientificCorrection}`;
+  }
+
+  // hint
+  const hintBox = $('hintBox');
+  if(state.hintsShown[q.id]){
+    hintBox.classList.add('show');
+    $('hintText').textContent = q.hint || 'No hint available for this question.';
+  } else {
+    hintBox.classList.remove('show');
+    $('hintText').textContent = '';
+  }
+
+  // buttons
+  $('btnPrev').disabled = state.current === 0;
+  $('btnNext').disabled = state.current === TOTAL - 1;
+  const checked = !!state.checked[q.id];
+  $('btnCheck').disabled = checked;
+  $('btnHint').disabled = checked || !!state.hintsShown[q.id];
+  $('btnRetry').style.display = checked ? 'inline-flex' : 'none';
+
+  renderHeader();
+}
+
+/* =====================================================================
+   VIEW SWITCHING
+   ===================================================================== */
+function switchView(view){
+  state.view = view;
+  saveState();
+  if(view === 'quiz'){
+    $('dashboard').classList.remove('active');
+    $('quizView').classList.add('active');
+    renderQuestion();
+  } else {
+    $('quizView').classList.remove('active');
+    $('dashboard').classList.add('active');
+    renderDashboard();
+  }
+}
+
+/* =====================================================================
+   MODAL
+   ===================================================================== */
+let modalAction = null;
+function openModal(title, msg, confirmLabel, action){
+  $('modalTitle').textContent = title;
+  $('modalMsg').textContent = msg;
+  $('modalConfirm').textContent = confirmLabel;
+  modalAction = action;
+  $('modalBack').classList.add('show');
+}
+function closeModal(){
+  $('modalBack').classList.remove('show');
+  modalAction = null;
+}
+
+/* =====================================================================
+   EVENT WIRING
+   ===================================================================== */
+function wireEvents(){
+  // header home  $('hdrHomeBtn').addEventListener('click', ()=> switchView('dashboard'));
+
+  // dashboard buttons
+  $('btnStart').addEventListener('click', ()=>{
+    // find first unanswered question, else first
+    let idx = QUESTIONS.findIndex(q=> !state.checked[q.id]);
+    if(idx === -1) idx = 0;
+    state.current = idx;
+    switchView('quiz');
+  });
+
+  $('btnReviewWrong').addEventListener('click', ()=>{
+    const firstWrong = QUESTIONS.findIndex(q=> state.checked[q.id] && state.answers[q.id] !== q.correctAnswer);
+    if(firstWrong === -1){
+      openModal('No Incorrect Answers', 'You have no incorrect answers to review yet. Keep practising!', 'OK', ()=> closeModal());
+      return;
+    }
+    state.current = firstWrong;
+    switchView('quiz');
+  });
+
+  $('btnRestart').addEventListener('click', ()=>{
+    openModal(
+      'Restart Quiz?',
+      'This will erase all saved answers, scores and progress. This cannot be undone.',
+      'Yes, Restart',
+      ()=>{
+        resetState();
+        closeModal();
+        switchView('dashboard');
+      }
+    );
+  });
+
+  // modal buttons
+  $('modalCancel').addEventListener('click', closeModal);
+  $('modalConfirm').addEventListener('click', ()=>{
+    if(typeof modalAction === 'function') modalAction();
+    else closeModal();
+  });
+  $('modalBack').addEventListener('click', (e)=>{
+    if(e.target === $('modalBack')) closeModal();
+  });
+
+  // quiz buttons
+  $('btnPrev').addEventListener('click', ()=>{
+    if(state.current > 0){
+      state.current--;
+      saveState();
+      renderQuestion();
+    }
+  });
+
+  $('btnNext').addEventListener('click', ()=>{
+    if(state.current < TOTAL - 1){
+      state.current++;
+      saveState();
+      renderQuestion();
+    }
+  });
+
+  $('btnHint').addEventListener('click', ()=>{
+    const q = QUESTIONS[state.current];
+    if(!q) return;
+    state.hintsShown[q.id] = true;
+    saveState();
+    renderQuestion();
+  });
+
+  $('btnCheck').addEventListener('click', ()=>{
+    const q = QUESTIONS[state.current];
+    if(!q) return;
+    if(state.checked[q.id]) return;
+    if(state.answers[q.id] === undefined){
+      openModal('Select an Answer', 'Please select an option before checking your answer.', 'OK', ()=> closeModal());
+      return;
+    }
+    state.checked[q.id] = true;
+    saveState();
+    renderQuestion();
+  });
+
+  $('btnRetry').addEventListener('click', ()=>{
+    const q = QUESTIONS[state.current];
+    if(!q) return;
+    openModal(
+      'Retry this question?',
+      'This will clear your checked answer for this question so you can attempt it again. Your score will update accordingly.',
+      'Yes, Retry',
+      ()=>{
+        delete state.checked[q.id];
+        delete state.answers[q.id];
+        delete state.hintsShown[q.id];
+        saveState();
+        closeModal();
+        renderQuestion();
+      }
+    );
+  });
+}
+
+/* =====================================================================
+   INIT
+   ===================================================================== */
+function init(){
+  loadState();
+  wireEvents();
+  if(state.view === 'quiz'){
+    $('dashboard').classList.remove('active');
+    $('quizView').classList.add('active');
+    renderQuestion();
+  } else {
+    $('quizView').classList.remove('active');
+    $('dashboard').classList.add('active');
+    renderDashboard();
+  }
+  renderHeader();
+  // initial header label
+  $('hdrProgLabel').textContent = `Question ${state.current + 1} of ${TOTAL}`;
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
